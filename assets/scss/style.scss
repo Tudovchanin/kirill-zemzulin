@@ -1,0 +1,28 @@
+@use 'reset';
+@use 'variables';
+@use 'utils';
+@use './blocks/organisms/header';
+@use './blocks/organisms/footer';
+@use './blocks/organisms/main';
+
+
+
+body {
+  font-weight: 400;
+  font-family: Inter, sans-serif;
+  background-color: var(--color-primary);
+}
+
+
+.no-scroll .categories a {
+  pointer-events: none;
+}
+
+
+.no-scroll .masonry__img {
+  pointer-events: none;
+}
+
+.no-scroll .masonry__img.masonry__img-pop-up {
+  pointer-events: initial;
+}

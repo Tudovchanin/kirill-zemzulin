@@ -1,0 +1,41 @@
+
+.footer {
+  position: relative;
+  padding-top: 50px;
+  padding-bottom: 25px;
+  color: var(--color-text-secondary);
+  background-color: var(--footer);
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: -400px;
+    right: 0;
+    z-index: -1;
+    width: 600px;
+    height: 600px;
+    background-image: url('/assets/images/stars.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  &__content-right {
+    font-size: 14px;
+  }
+
+  &__content-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+  }
+}

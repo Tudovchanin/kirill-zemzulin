@@ -1,0 +1,120 @@
+@use '../atoms/logo';
+@use '../atoms/burger';
+@use '../molecules/list-menu';
+@use '../molecules/container-icons';
+
+
+.header {
+  // backdrop-filter влияет на position fixed у дочернего элемента и не дает ему позиционироваться относительно окна
+  position: relative;
+  
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  &__logo {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: '';
+      top: -80px;
+      left: 150px;
+      z-index: 0;
+      width: 250px;
+      height: 250px;
+      background-image: url('/assets/images/stars.png');
+      background-repeat: no-repeat;
+      background-position: left top;
+      background-size: 100%;
+      opacity: 0;
+      transform-origin: center;
+      transform: rotate(-90deg);
+      animation: stars-top 2s 1s forwards;
+      pointer-events: none;
+    }
+  }
+
+  &__mobile-content {
+    display: contents;
+
+    @media (max-width:1114px) {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      width: 55vw;
+      height: 100vh;
+      ;
+      padding: 200px 20px 100px;
+      // background-color: var(--mobile-menu);
+      background-color: rgba(0, 0, 0, 0.9);
+      transform: translateX(100%);
+      transition: transform .3s;
+      overflow: auto;
+
+
+      &--open {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+  }
+
+  &__list {
+    @media (max-width:1114px) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__social {
+    @media (max-width:1114px) {
+      padding-top: 50px;
+    }
+  }
+
+  &__burger {
+    display: none;
+
+    @media (max-width:1114px) {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      z-index: var(--z-index-100);
+      display: block;
+      transform: translateY(-50%);
+    }
+
+    @media (max-width: 768px) {
+      right: 16px;
+    }
+
+    @media (max-width: 480px) {
+      right: 12px;
+    }
+  }
+}
+
+
+@keyframes stars-top {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+
+  }
+}

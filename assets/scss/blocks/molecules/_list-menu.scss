@@ -1,0 +1,12 @@
+
+@use '../atoms/link-menu';
+
+.list-menu {
+  display: flex;
+  gap: 50px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+}

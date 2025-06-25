@@ -1,0 +1,59 @@
+
+.base-btn{
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 15px 30px;
+  font-size: 18px;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: var(--link-btn);
+  border: none;
+  border-top: solid transparent 1px;
+  border-bottom: solid transparent 1px;
+  cursor: pointer;
+
+  @media (hover: hover) {
+    transition: color 0.5s;
+
+    &:hover {
+      color: var(--color-text-primary);
+      border-bottom: solid var(--color-text-primary) 1px;
+    }
+
+    &::before,
+    &::after {
+      position: absolute;
+      content: "";
+      width: 0;
+      height: calc(100% + 1px);
+      transition: width 0.5s;
+    }
+
+    &::after {
+      top: -1px;
+      right: 0;
+      z-index: -1;
+      background-color: var(--color-primary);
+    }
+
+    &::before {
+      top: -1px;
+      left: 0;
+      z-index: -1;
+      background-color: var(--color-primary);
+    }
+
+    &:hover::before {
+      width: 50%;
+    }
+
+    &:hover::after {
+      width: 50%;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,9 @@
+@use '../atoms/base-btn';
+@use '../atoms/base-form';
+
+
+.main {
+  &--flex-grow-1 {
+    flex-grow: 1;
+  }
+}

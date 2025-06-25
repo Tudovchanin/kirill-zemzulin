@@ -1,0 +1,45 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "eslint": "eslint .",
+    "stylelint": "stylelint \"**/*.{css,scss,vue}\"",
+    "eslint:fix": "eslint . --fix",
+    "stylelint:fix": "stylelint \"**/*.{css,scss,vue}\" --fix"
+  },
+  "dependencies": {
+    "@nuxt/eslint": "^1.4.1",
+    "@nuxt/image": "^1.10.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
+    "@nuxtjs/sanity": "^1.13.3",
+    "@pinia/nuxt": "^0.11.0",
+    "@vue/devtools-api": "^7.7.7",
+    "eslint": "^9.27.0",
+    "nuxt": "^3.17.3",
+    "nuxt-mail": "^6.0.2",
+    "nuxt-typedjs": "^1.2.0",
+    "pinia": "^3.0.2",
+    "rellax": "^1.12.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@hypernym/nuxt-gsap": "^2.4.3",
+    "@iconify-json/entypo-social": "^1.2.2",
+    "@iconify-json/logos": "^1.2.4",
+    "@nuxt/icon": "^1.13.0",
+    "postcss-html": "^1.8.0",
+    "sass": "^1.89.0",
+    "stylelint": "^16.19.1",
+    "stylelint-config-standard-scss": "^15.0.1",
+    "stylelint-order": "^7.0.0",
+    "typescript": "^5.8.3",
+    "vue-tsc": "^2.2.10"
+  }
+}

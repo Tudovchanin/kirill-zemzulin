@@ -1,0 +1,86 @@
+
+
+.form {
+  display: grid;
+  gap: 20px;
+  max-width: 600px;
+  padding: 40px;
+  color: var(--color-text-primary);
+  background-color: rgba(31, 31, 31, 0.81);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    max-width: 400px;
+    padding: 20px;
+  }
+
+  &__field {
+    display: grid;
+    gap: 8px;
+  }
+
+  &__input {
+    height: 40px;
+    padding-left: 16px;
+    font-size: 16px;
+    color: black;
+    border: none;
+
+    &:focus {
+      outline: 2px solid var(--color-accent-primary);
+    }
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  &__select {
+    height: 40px;
+    padding-left: 16px;
+    font-size: 16px;
+    color: black;
+    border: none;
+
+    &:focus {
+      outline: 2px solid var(--color-accent-primary);
+    }
+
+    &:invalid {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    & option:not(.form__select--placeholder) {
+        color: black;
+      }
+  
+  }
+
+  &__input-date {
+    height: 40px;
+    padding-left: 16px;
+    color: rgba(0, 0, 0, 0.5);
+    border: none;
+
+    &:focus {
+      outline: 2px solid var(--color-accent-primary);
+    }
+  }
+
+  &__text-area {
+    padding: 16px;
+    outline: none;
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-accent-primary);
+    }
+  }
+
+  &__submit {
+    cursor: pointer;
+  }
+}

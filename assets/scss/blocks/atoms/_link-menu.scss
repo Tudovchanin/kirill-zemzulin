@@ -1,0 +1,48 @@
+
+
+.link-menu {
+  padding: 2px 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+
+  @media (hover:hover) {
+    position: relative;
+    transition: color .5s;
+
+    &::before {
+      position: absolute;
+      content: '';
+      right: initial;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--color-accent-primary);
+      transition: all .3s;
+    }
+
+    &:hover {
+      color: var(--color-accent-primary);
+    }
+
+    &:hover::before {
+      right: 0;
+      left: inherit;
+      width: 100%;
+    }
+  }
+
+}
+
+.link-menu.router-link-exact-active {
+  color: var(--color-accent-primary);
+  
+  &::before{
+    width: 100%;
+  }
+}
+
+
