@@ -1,8 +1,7 @@
 import compression from 'compression'
 
 export default defineEventHandler((event) => {
-  const req = event.node.req
-  const res = event.node.res
-  compression()(req, res, () => {})
-})
-
+  const req = event.node.req; // IncomingMessage
+  const res = event.node.res; // ServerResponse
+  compression()(req, res, () => {});
+});
