@@ -113,7 +113,7 @@ const handleMediaQueryChange = (e: MediaQueryListEvent) => {
 
   if (e.matches && elementsLinksCategory.length) {
     elementsLinksCategory.forEach((link) => {
-      const animation = useGsap.to(link, { transform: 'scale(1.1)' });
+      const animation = useGsap.to(link, { transform: "scale(1.1)" });
 
       const scrollTrigger = new useScrollTrigger({
         trigger: link,
@@ -161,7 +161,6 @@ onMounted(() => {
 
   initAnimateCardCategoriesScroll();
 
-
   if (categoriesStore.categories.length && !animateCardCategoriesScroll) {
     animateCardCategoriesScroll = initAnimateCardCategoriesScroll();
   }
@@ -205,14 +204,31 @@ onUnmounted(() => {
     </h1>
     <section>
       <h2 class="sr-only">Категории фотографий</h2>
-      <ul v-if="categoriesStore.categories.length" class="categories page-padding-y">
-        <li v-for="(category, index) in categoriesStore.categories" :key="category._id"
-          class="categories__container-img">
-          <NuxtLink :to="`/categories/${CATEGORY_SLUG_MAP[category.title]}`" class="categories__link"
-            @mouseenter="handleInCategory" @mouseleave="handleOutCategory">
-            <NuxtImg draggable="false" :src="category.titleImageUrl" width="550" height="800"
-              class="categories__img appear" :class="{ [`appear--${index}`]: loadImg[index] }"
-              :alt="loadImg[index] ? category.title : ''" @load="handleLoadImg(index)" />
+      <ul
+        v-if="categoriesStore.categories.length"
+        class="categories page-padding-y"
+      >
+        <li
+          v-for="(category, index) in categoriesStore.categories"
+          :key="category._id"
+          class="categories__container-img"
+        >
+          <NuxtLink
+            :to="`/categories/${CATEGORY_SLUG_MAP[category.title]}`"
+            class="categories__link"
+            @mouseenter="handleInCategory"
+            @mouseleave="handleOutCategory"
+          >
+            <NuxtImg
+              draggable="false"
+              :src="category.titleImageUrl"
+              width="550"
+              height="800"
+              class="categories__img appear"
+              :class="{ [`appear--${index}`]: loadImg[index] }"
+              :alt="loadImg[index] ? 'обложка категорий фото' : ''"
+              @load="handleLoadImg(index)"
+            />
             <h3 v-show="loadImg[index]" class="categories__title">
               {{ category.title }}
             </h3>
@@ -221,24 +237,79 @@ onUnmounted(() => {
       </ul>
       <template v-else>
         <ul class="categories page-padding-y">
-          <li v-for="category in CATEGORY_SLUG_MAP" :key="category" class="categories__container-img">
+          <li
+            v-for="category in CATEGORY_SLUG_MAP"
+            :key="category"
+            class="categories__container-img"
+          >
             <div class="categories__loader">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="25" y="85">
-                  <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4" />
+                <rect
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="11"
+                  width="30"
+                  height="30"
+                  x="25"
+                  y="85"
+                >
+                  <animate
+                    attributeName="opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="-.4"
+                  />
                 </rect>
-                <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="85" y="85">
-                  <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2" />
+                <rect
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="11"
+                  width="30"
+                  height="30"
+                  x="85"
+                  y="85"
+                >
+                  <animate
+                    attributeName="opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="-.2"
+                  />
                 </rect>
-                <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="145" y="85">
-                  <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0" />
+                <rect
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="11"
+                  width="30"
+                  height="30"
+                  x="145"
+                  y="85"
+                >
+                  <animate
+                    attributeName="opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="0"
+                  />
                 </rect>
               </svg>
             </div>
-            <NuxtImg :src="PLUG" width="550" height="800" sizes="md:700" alt="Загрузка изображения..." />
+            <NuxtImg
+              :src="PLUG"
+              width="550"
+              height="800"
+              sizes="md:700"
+              alt="Загрузка изображения..."
+            />
           </li>
         </ul>
       </template>
@@ -258,7 +329,9 @@ onUnmounted(() => {
         <span id="typed"></span>
       </div>
 
-      <NuxtLink to="/contact" class="about-home__link base-btn">Контакты</NuxtLink>
+      <NuxtLink to="/contact" class="about-home__link base-btn"
+        >Контакты</NuxtLink
+      >
     </section>
   </div>
 </template>
@@ -305,7 +378,8 @@ onUnmounted(() => {
         transform: scale(1.02);
       }
 
-      &:hover .categories__title {}
+      &:hover .categories__title {
+      }
     }
   }
 
@@ -334,8 +408,6 @@ onUnmounted(() => {
     animation: title 0.5s 0.5s forwards;
   }
 }
-
-
 
 .about-home {
   display: grid;
@@ -412,10 +484,8 @@ onUnmounted(() => {
 
   &--2 {
     animation: smooth-appear 0.4s linear forwards;
-
   }
 }
-
 
 .about-animate {
   opacity: 0;
