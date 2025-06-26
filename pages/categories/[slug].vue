@@ -42,7 +42,6 @@ let imageLoadCount = 0;
 const handleLoadImage = () => {
   if (!slug.value) return;
   ++imageLoadCount;
-  console.log("load", imageLoadCount);
   if (categoriesStore.imagesByCategory[slug.value]?.length === imageLoadCount) {
     animateLoadPhoto = initAnimateLoadAnimation();
   }
@@ -88,7 +87,6 @@ onMounted(async () => {
   }
 });
 onUnmounted(() => {
-  console.log("РАЗМОНТИРОВАН", slug.value);
   if (animateLoadPhoto) {
     animateLoadPhoto?.kill();
   }

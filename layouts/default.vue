@@ -61,7 +61,6 @@ const handleTouchPage = (e: TouchEvent) => {
   }
 };
 const handleFocusAbout = () => {
-  console.log("handleFocusAbout handleFocusAbout handleFocusAbout");
 
   dropMenuComponentRef.value.closeMenu();
 };
@@ -69,7 +68,6 @@ const handleClosePopUp = (e: Event) => {
   const target = e.target as HTMLElement;
   if (!target) return;
   if (target.closest(".pop-up__img")) {
-    console.log("клик по картинке");
   }
   popUpStore.setPopUp(false);
 };

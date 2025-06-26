@@ -17,7 +17,6 @@ export const useCategoriesStore = defineStore('categories', () => {
 
     try {
       categories.value = await sanity.fetch(CATEGORIES_WITH_IMAGES_QUERY)
-      console.log('ПОЛУЧЕНЫ КАТЕГОРИИ', categories.value);
       return categories.value; 
     } catch (e: unknown) {
 

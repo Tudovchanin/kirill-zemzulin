@@ -15,7 +15,7 @@ export const useContactStore = defineStore('contact', () => {
     try {
       
       contact.value = await sanity.fetch(CONTACT_QUERY) as Contact;
-      console.log('КОНТАКТЫ ПОЛУЧЕНЫ', contact.value);
+
       
 
     } catch (e: unknown) {
