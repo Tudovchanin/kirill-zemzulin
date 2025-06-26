@@ -31,7 +31,6 @@ let scrollSmoother: null | ScrollSmoother = null;
 let scrollTimeout: ReturnType<typeof setTimeout>;
 let noScrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
-
 const handleScroll = () => {
   clearTimeout(scrollTimeout);
   isScrollY.value = true;
@@ -61,7 +60,6 @@ const handleTouchPage = (e: TouchEvent) => {
   }
 };
 const handleFocusAbout = () => {
-
   dropMenuComponentRef.value.closeMenu();
 };
 const handleClosePopUp = (e: Event) => {
@@ -83,7 +81,6 @@ const handleClickBurgerIcon = () => {
     document.documentElement.classList.remove("no-scroll");
   }
 };
-
 
 watch(
   () => route.path,
@@ -109,7 +106,6 @@ watch(
     }
   }
 );
-
 
 onMounted(async () => {
   if (categoriesStore.categories.length === 0) {
@@ -154,17 +150,38 @@ onUnmounted(() => {
   <div class="layout-root">
     <svg style="display: none">
       <defs>
-        <filter id="filter-home" color-interpolation-filters="linearRGB" filterUnits="objectBoundingBox"
-          primitiveUnits="userSpaceOnUse">
-          <feColorMatrix type="saturate" values="0" in="SourceGraphic" result="colormatrix" />
+        <filter
+          id="filter-home"
+          color-interpolation-filters="linearRGB"
+          filterUnits="objectBoundingBox"
+          primitiveUnits="userSpaceOnUse"
+        >
+          <feColorMatrix
+            type="saturate"
+            values="0"
+            in="SourceGraphic"
+            result="colormatrix"
+          />
         </filter>
       </defs>
     </svg>
 
-    <div class="pop-up" :class="{ 'pop-up--visible': isPopUpOpen }" @click="handleClosePopUp">
+    <div
+      class="pop-up"
+      :class="{ 'pop-up--visible': isPopUpOpen }"
+      @click="handleClosePopUp"
+    >
       <div class="pop-up__container-img">
-        <NuxtImg v-if="isPopUpOpen" draggable="false" :src="popUpStore.img?.url" :width="popUpStore.img?.width"
-          :height="popUpStore.img?.height" sizes="md:700" :alt="popUpStore.img?.description" class="pop-up__img" />
+        <NuxtImg
+          v-if="isPopUpOpen"
+          draggable="false"
+          :src="popUpStore.img?.url"
+          :width="popUpStore.img?.width"
+          :height="popUpStore.img?.height"
+          sizes="md:700"
+          :alt="popUpStore.img?.description"
+          class="pop-up__img"
+        />
       </div>
       <button class="pop-up__close">
         <Icon :name="'lucide-x'" size="32" />
@@ -172,68 +189,136 @@ onUnmounted(() => {
     </div>
     <div id="smooth-wrapper" @touchstart.passive="handleTouchPage">
       <div id="smooth-content" class="layout-page">
-        <div aria-hidden="true" class="background-blur" :class="{
-          'background-blur--animate': isScrollY,
-          'background-blur--about': isAboutPage,
-          'background-blur--contact': isContactPage,
-          'background-blur--categories': isCategories,
-        }"></div>
+        <div
+          aria-hidden="true"
+          class="background-blur"
+          :class="{
+            'background-blur--animate': isScrollY,
+            'background-blur--about': isAboutPage,
+            'background-blur--contact': isContactPage,
+            'background-blur--categories': isCategories,
+          }"
+        ></div>
 
         <header class="header header-animate">
           <div class="header__content width-page x-center page-padding-x">
-            <NuxtLink to="/" class="header__logo logo">Kirill Zemzyulin</NuxtLink>
-            <div ref="mobileMenuRef" class="header__mobile-content"
-              :class="{ 'header__mobile-content--open': isMenuOpen }">
+            <NuxtLink to="/" class="header__logo logo"
+              >Kirill Zemzyulin</NuxtLink
+            >
+            <div
+              ref="mobileMenuRef"
+              class="header__mobile-content"
+              :class="{ 'header__mobile-content--open': isMenuOpen }"
+            >
               <nav class="header__nav">
                 <ul class="header__list list-menu">
                   <li class="list-menu__item">
                     <NuxtLink to="/" class="link-menu">Портфолио</NuxtLink>
                   </li>
-                  <li  ref="itemDropRef" class="list-menu__item" :class="{'list-menu__item--hidden': !categoriesStore.categories.length}">
-                    <AtomsDropMenu ref="dropMenuComponentRef" tabindex="0" starts-link="/categories"
-                      color-bg="var(--drop-menu)" title-class="link-menu" :links-data="dropMenuData" />
+                  <li
+                    ref="itemDropRef"
+                    class="list-menu__item"
+                    :class="{
+                      'list-menu__item--hidden':
+                        !categoriesStore.categories.length,
+                    }"
+                  >
+                    <AtomsDropMenu
+                      ref="dropMenuComponentRef"
+                      tabindex="0"
+                      starts-link="/categories"
+                      color-bg="var(--drop-menu)"
+                      title-class="link-menu"
+                      :links-data="dropMenuData"
+                    />
                   </li>
                   <li class="list-menu__item">
-                    <NuxtLink to="/about" class="link-menu" @focus="handleFocusAbout">Мои услуги</NuxtLink>
+                    <NuxtLink
+                      to="/about"
+                      class="link-menu"
+                      @focus="handleFocusAbout"
+                      >Мои услуги</NuxtLink
+                    >
                   </li>
                   <li class="list-menu__item">
-                    <NuxtLink to="/contact" class="link-menu">Контакты</NuxtLink>
+                    <NuxtLink to="/contact" class="link-menu"
+                      >Контакты</NuxtLink
+                    >
                   </li>
-                  
                 </ul>
               </nav>
               <ul class="header__social container-icons">
                 <li v-if="contactStore.mainSocialLinks.telegram">
-                  <a :href="contactStore.mainSocialLinks.telegram?.url" target="_blank" rel="noopener noreferrer">
-                    <Icon class="social-icon" name="simple-icons:telegram" size="28" />
+                  <a
+                    :href="contactStore.mainSocialLinks.telegram?.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label=" ссылка на телеграм Кирилла Земзюлина"
+
+                  >
+                    <Icon
+                      class="social-icon"
+                      name="simple-icons:telegram"
+                      size="28"
+                    />
                   </a>
                 </li>
                 <li v-if="contactStore.mainSocialLinks.vk">
-                  <a :href="contactStore.mainSocialLinks.vk?.url" target="_blank" rel="noopener noreferrer">
-                    <Icon class="social-icon" name="entypo-social:vk" size="28" />
+                  <a
+                    :href="contactStore.mainSocialLinks.vk?.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label=" ссылка на профиль вк Кирилла Земзюлина"
+
+                  >
+                    <Icon
+                      class="social-icon"
+                      name="entypo-social:vk"
+                      size="28"
+                    />
                   </a>
                 </li>
                 <li v-if="contactStore.mainSocialLinks.watsApp">
-                  <a :href="contactStore.mainSocialLinks.watsApp?.url" target="_blank" rel="noopener noreferrer">
-                    <Icon class="social-icon" name="simple-icons:whatsapp" size="28" />
+                  <a
+                    :href="contactStore.mainSocialLinks.watsApp?.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label=" ссылка на wats app Кирилла Земзюлина"
+                  >
+                    <Icon
+                      class="social-icon"
+                      name="simple-icons:whatsapp"
+                      size="28"
+                    />
                   </a>
                 </li>
                 <li v-if="contactStore.mainSocialLinks.vk">
-                  <a :href="contactStore.mainSocialLinks.vk?.url" target="_blank" rel="noopener noreferrer">
-                    <Icon class="social-icon" name="simple-icons:instagram" size="28" />
+                  <a
+                    :href="contactStore.mainSocialLinks.vk?.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label=" ссылка на профиль инстаграм Кирилла Земзюлина"
+
+                  >
+                    <Icon
+                      class="social-icon"
+                      name="simple-icons:instagram"
+                      size="28"
+
+                    />
                   </a>
                 </li>
-        
               </ul>
             </div>
-            <button ref="burgerBtnRef" class="header__burger burger" @click="handleClickBurgerIcon">
+            <button
+              ref="burgerBtnRef"
+              class="header__burger burger"
+              @click="handleClickBurgerIcon"
+            >
               <Icon :name="isMenuOpen ? 'lucide-x' : 'lucide-menu'" size="32" />
             </button>
           </div>
         </header>
-
-
-
         <main class="main main--flex-grow-1">
           <slot></slot>
         </main>
@@ -249,7 +334,12 @@ onUnmounted(() => {
               </p>
               <p>
                 Совместно с
-                <a href="https://www.sanity.io" target="_blank" rel="noopener noreferrer">Sanity</a>
+                <a
+                  href="https://www.sanity.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Sanity</a
+                >
               </p>
             </div>
           </div>
@@ -333,22 +423,24 @@ onUnmounted(() => {
   animation-play-state: paused;
 
   &::before {
-      position: absolute;
-      content: "";
-      top: 0;
-      left: 60%;
-      z-index: -1;
-      display: none;
-      width: 20%;
-      height: 100%;
-      opacity: 0;
-      animation: opacity 1s 0.5s linear forwards;
-      backdrop-filter: blur(1px) brightness(2) saturate(0);
-    }
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 60%;
+    z-index: -1;
+    display: none;
+    width: 20%;
+    height: 100%;
+    opacity: 0;
+    animation: opacity 1s 0.5s linear forwards;
+    backdrop-filter: blur(1px) brightness(2) saturate(0);
+  }
 
-  &--animate:not(.background-blur--about,
-    .background-blur--categories,
-    .background-blur--contact) {
+  &--animate:not(
+      .background-blur--about,
+      .background-blur--categories,
+      .background-blur--contact
+    ) {
     filter: brightness(1) saturate(1);
     animation: move-decor 4s linear infinite alternate;
   }
@@ -361,17 +453,18 @@ onUnmounted(() => {
     opacity: 0;
     filter: brightness(1) saturate(0);
 
-    animation: move-decor 4s linear infinite alternate, about 0.5s linear forwards, about-mask 1s 0.7s forwards;
+    animation: move-decor 4s linear infinite alternate,
+      about 0.5s linear forwards, about-mask 1s 0.7s forwards;
     animation-play-state: paused, running, running;
   }
 
   &--contact {
     overflow: hidden;
-    animation: move-decor 4s linear infinite alternate, contact-mask 1s 0.3s forwards;
+    animation: move-decor 4s linear infinite alternate,
+      contact-mask 1s 0.3s forwards;
     animation-play-state: paused, running;
     filter: brightness(1) saturate(1);
 
-  
     &::before {
       display: block;
     }
@@ -396,7 +489,6 @@ onUnmounted(() => {
 .header-animate {
   animation: header-init 0.5s linear;
 }
-
 
 @keyframes contact-decor {
   0% {
@@ -441,14 +533,12 @@ onUnmounted(() => {
     transform: scaleX(1) translate(110px, 0) rotate(100deg) scale(2);
     opacity: 0;
     filter: brightness(2) saturate(0);
-
   }
 
   30% {
     transform: scaleX(1) translate(0, 0) rotate(0deg) scale(1.5);
     opacity: 1;
     filter: brightness(2) saturate(0);
-
   }
 
   60% {
@@ -460,7 +550,6 @@ onUnmounted(() => {
     background-image: var(--about-bg);
     transform: scaleX(-1) translate(0, 0) rotate(0deg) scale(1);
     opacity: 1;
-
   }
 }
 
@@ -511,7 +600,6 @@ onUnmounted(() => {
     mask-repeat: no-repeat;
   }
 }
-
 
 @keyframes header-init {
   0% {
