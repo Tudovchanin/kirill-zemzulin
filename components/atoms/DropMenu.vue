@@ -38,7 +38,20 @@ defineExpose({
   >
     <div class="drop-menu__title">
       <span class="drop-menu__title-text">Проекты</span>
-      <Icon class="drop-menu__title-icon" name="mdi:chevron-down" size="24" />
+
+      <div class="drop-menu__title-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"
+          />
+        </svg>
+      </div>
     </div>
     <ul
       class="drop-menu__list"
@@ -82,6 +95,11 @@ defineExpose({
     gap: 6px;
   }
 
+  &__title-icon {
+    display: flex;
+    width: 24px;
+  }
+
   &__list {
     position: absolute;
     top: 100%;
@@ -122,5 +140,13 @@ defineExpose({
 
 .router-link-exact-active {
   color: var(--color-accent-primary);
+}
+@keyframes show-arrow {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

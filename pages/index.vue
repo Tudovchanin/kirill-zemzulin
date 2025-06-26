@@ -111,15 +111,15 @@ const initAnimateHomeAboutAppearance = () => {
 };
 
 const handleMediaQueryChange = (e: MediaQueryListEvent) => {
-  const elementsImagesCategory = document.querySelectorAll(".categories__img");
+  const elementsLinksCategory = document.querySelectorAll(".categories__link");
 
-  if (e.matches && elementsImagesCategory.length) {
-    elementsImagesCategory.forEach((images) => {
-      const animation = useGsap.to(images, { filter: "saturate(1)" });
+  if (e.matches && elementsLinksCategory.length) {
+    elementsLinksCategory.forEach((link) => {
+      const animation = useGsap.to(link, { transform: 'scale(1.1)' });
 
       const scrollTrigger = new useScrollTrigger({
-        trigger: images,
-        start: "-200px top",
+        trigger: link,
+        start: "top 150px",
         end: "center top",
         markers: true,
         scrub: true,
@@ -135,7 +135,7 @@ const handleMediaQueryChange = (e: MediaQueryListEvent) => {
 
     animationsMediaQueryChange.length = 0;
     scrollTriggersMediaQueryChange.length = 0;
-    useGsap.set(elementsImagesCategory, { clearProps: "filter" });
+    // useGsap.set(elementsImagesCategory, { clearProps: "opacity" });
   }
 };
 const handleOutCategory = () => {
@@ -404,11 +404,18 @@ onUnmounted(() => {
 
   &__link {
     opacity: 0.95;
+    @media (max-width: 768px) {
+      opacity: 1;
+    }
     @media (hover: hover) {
       transition: transform 0.3s, opacity 0.3s;
       &:hover {
         opacity: 1;
        transform: scale(1.02);
+      }
+
+      &:hover .categories__title {
+
       }
     }
   }
@@ -438,7 +445,7 @@ onUnmounted(() => {
     animation: title 0.5s 0.5s forwards;
 
     @media (hover: hover) {
-      transition: background-color 0.3s ease-in, color 0.3s ease-out;
+      // transition: background-color 0.3s ease-in, color 0.3s ease-out;
     }
   }
 }

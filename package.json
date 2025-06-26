@@ -33,6 +33,7 @@
     "@hypernym/nuxt-gsap": "^2.4.3",
     "@iconify-json/entypo-social": "^1.2.2",
     "@iconify-json/logos": "^1.2.4",
+    "@iconify-json/mdi": "^1.2.3",
     "@nuxt/icon": "^1.13.0",
     "postcss-html": "^1.8.0",
     "sass": "^1.89.0",

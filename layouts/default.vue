@@ -199,7 +199,7 @@ onUnmounted(() => {
                   <li class="list-menu__item">
                     <NuxtLink to="/" class="link-menu">Портфолио</NuxtLink>
                   </li>
-                  <li ref="itemDropRef" class="list-menu__item">
+                  <li  ref="itemDropRef" class="list-menu__item" :class="{'list-menu__item--hidden': !categoriesStore.categories.length}">
                     <AtomsDropMenu ref="dropMenuComponentRef" tabindex="0" starts-link="/categories"
                       color-bg="var(--drop-menu)" title-class="link-menu" :links-data="dropMenuData" />
                   </li>
@@ -209,33 +209,31 @@ onUnmounted(() => {
                   <li class="list-menu__item">
                     <NuxtLink to="/contact" class="link-menu">Контакты</NuxtLink>
                   </li>
+                  
                 </ul>
               </nav>
               <ul class="header__social container-icons">
-                <li>
-                  <a :href="contactStore.mainSocialLinks.telegram
-                      ? contactStore.mainSocialLinks.telegram.url
-                      : '/'
-                    " target="_blank" rel="noopener noreferrer">
+                <li v-if="contactStore.mainSocialLinks.telegram">
+                  <a :href="contactStore.mainSocialLinks.telegram?.url" target="_blank" rel="noopener noreferrer">
                     <Icon class="social-icon" name="simple-icons:telegram" size="28" />
                   </a>
                 </li>
-                <li>
-                  <a :href="contactStore.mainSocialLinks.vk
-                      ? contactStore.mainSocialLinks.vk.url
-                      : '/'
-                    " target="_blank" rel="noopener noreferrer">
+                <li v-if="contactStore.mainSocialLinks.vk">
+                  <a :href="contactStore.mainSocialLinks.vk?.url" target="_blank" rel="noopener noreferrer">
                     <Icon class="social-icon" name="entypo-social:vk" size="28" />
                   </a>
                 </li>
-                <li>
-                  <a :href="contactStore.mainSocialLinks.watsApp
-                      ? contactStore.mainSocialLinks.watsApp.url
-                      : '/'
-                    " target="_blank" rel="noopener noreferrer">
+                <li v-if="contactStore.mainSocialLinks.watsApp">
+                  <a :href="contactStore.mainSocialLinks.watsApp?.url" target="_blank" rel="noopener noreferrer">
                     <Icon class="social-icon" name="simple-icons:whatsapp" size="28" />
                   </a>
                 </li>
+                <li v-if="contactStore.mainSocialLinks.vk">
+                  <a :href="contactStore.mainSocialLinks.vk?.url" target="_blank" rel="noopener noreferrer">
+                    <Icon class="social-icon" name="simple-icons:instagram" size="28" />
+                  </a>
+                </li>
+        
               </ul>
             </div>
             <button ref="burgerBtnRef" class="header__burger burger" @click="handleClickBurgerIcon">
@@ -243,6 +241,9 @@ onUnmounted(() => {
             </button>
           </div>
         </header>
+
+
+
         <main class="main main--flex-grow-1">
           <slot></slot>
         </main>
@@ -314,13 +315,13 @@ onUnmounted(() => {
 
 #smooth-wrapper {
   position: relative;
-  // overflow: hidden;
+  overflow: hidden;
 }
 
 #smooth-content {
   position: relative;
   min-height: calc(100vh + 1px);
-  // overflow: hidden;
+  overflow: hidden;
   will-change: transform; // убирает дрожание при скроле
 }
 
@@ -336,10 +337,24 @@ onUnmounted(() => {
   background-position: center;
   background-size: cover;
   border-radius: 100%;
-  filter: brightness(3) saturate(0);
-  transition: filter 1s linear, border-radius 1s;
+  filter: brightness(2) saturate(0);
+  transition: filter 0.3s, border-radius 0.5s;
   animation: move-decor 4s linear infinite alternate;
   animation-play-state: paused;
+
+  &::before {
+      position: absolute;
+      content: "";
+      top: 0;
+      left: 60%;
+      z-index: -1;
+      display: none;
+      width: 20%;
+      height: 100%;
+      opacity: 0;
+      animation: opacity 1s 0.5s linear forwards;
+      backdrop-filter: blur(1px) brightness(2) saturate(0);
+    }
 
   &--animate:not(.background-blur--about,
     .background-blur--categories,
@@ -367,20 +382,10 @@ onUnmounted(() => {
     animation-play-state: paused, running;
     filter: brightness(1) saturate(1);
 
+  
     &::before {
-      position: absolute;
-      content: "";
-      top: 0;
-      left: 60%;
-      z-index: -1;
-      width: 20%;
-      height: 100%;
-      opacity: 0;
-      animation: opacity 1s 0.5s linear forwards;
-      backdrop-filter: blur(1px) brightness(2) saturate(0);
+      display: block;
     }
-
-
   }
 
 
@@ -403,19 +408,11 @@ onUnmounted(() => {
 
   &--categories {
     border-radius: 0;
-    filter: blur(1px) saturate(1) brightness(25%);
+    filter: saturate(1) brightness(25%);
 
     &::before {
-      position: absolute;
-      content: "";
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--color-accent-primary);
-      opacity: 0;
       animation: categories-decor 1.5s linear forwards;
-      mix-blend-mode: color-burn;
+      background-color: red;
     }
   }
 }
@@ -430,6 +427,9 @@ onUnmounted(() => {
   animation: header-init 0.5s linear;
 }
 
+@keyframes categories {
+  
+}
 
 @keyframes contact-decor {
   0% {
