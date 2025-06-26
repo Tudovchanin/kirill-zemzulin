@@ -5,33 +5,24 @@
 @use './blocks/organisms/footer';
 @use './blocks/organisms/main';
 
-
-
 body {
   font-weight: 400;
   font-family: Inter, sans-serif;
   background-color: var(--color-primary);
 }
-/* Стилизация скроллбара для Webkit-браузеров (Chrome, Safari, Яндекс.Браузер, Opera) */
 body::-webkit-scrollbar {
-  width: 10px;              /* Ширина вертикального скроллбара */
-  height: 10px;             /* Высота горизонтального скроллбара */
+  width: 10px;
+  height: 10px;
 }
-
-/* Ползунок скроллбара */
 body::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #6e8efb, #a777e3); /* Градиентный фон для ползунка */
-  border-radius: 8px;        /* Скругление углов ползунка */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* Тень для объёма */
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-
-
-/* Трек (фон) скроллбара */
 body::-webkit-scrollbar-track {
-  background: #f3f3f3;       /* Светлый фон трека */
-  border-radius: 8px;        /* Скругление углов трека */
+  background: #f3f3f3;
+  border-radius: 8px;
 }
-
 .no-scroll .categories a {
   pointer-events: none;
 }

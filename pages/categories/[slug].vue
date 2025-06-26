@@ -8,10 +8,10 @@ const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const popUpStore = usePopUpStore();
 
-// PATH CATEGORIES
+
 const slug = ref<Slug | null>(null);
 
-// SEO WATCH
+
 watch(
   () => slug.value,
   (newSlug) => {
@@ -33,11 +33,11 @@ watch(
   }
 );
 
-// DOM ELEMENTS
+
 const masonryRef = ref<HTMLElement | null>(null);
 const photoRef = ref<HTMLElement[] | []>([]);
 
-// ОБРАБОТКА ЗАГРУЗКИ ВСЕХ КАРТИНОК
+
 let imageLoadCount = 0;
 const handleLoadImage = () => {
   if (!slug.value) return;
@@ -48,7 +48,7 @@ const handleLoadImage = () => {
   }
 };
 
-// GSAP ANIMATION
+
 let animateLoadPhoto: gsap.core.Tween | null = null;
 const masonryImagesRef = ref<HTMLElement[]>([]);
 
@@ -81,7 +81,7 @@ const handleClickImg = (img: Image) => {
   popUpStore.setPopUpImg(img);
 };
 
-// HOOKS
+
 onMounted(async () => {
   if (route.params?.slug) {
     slug.value = route.params.slug as Slug;

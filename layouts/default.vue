@@ -12,12 +12,8 @@ const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const contactStore = useContactStore();
 const popUpStore = usePopUpStore();
-// const hoverStore = useHoverStore();
-
-// categories link
 const dropMenuData = ref<LinkDrop[]>([]);
 
-// FLAG
 const isAboutPage = ref(false);
 const isContactPage = ref(false);
 const isCategories = ref(false);
@@ -25,20 +21,17 @@ const isScrollY = ref(false);
 const isMenuOpen = ref(false);
 const isPopUpOpen = ref(false);
 
-// DOM ELEMENTS
 const mobileMenuRef = ref();
 const burgerBtnRef = ref();
 const itemDropRef = ref();
 const dropMenuComponentRef = ref();
 
-// gsap
 let scrollSmoother: null | ScrollSmoother = null;
 
-// id timeouts
 let scrollTimeout: ReturnType<typeof setTimeout>;
 let noScrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
-// handle
+
 const handleScroll = () => {
   clearTimeout(scrollTimeout);
   isScrollY.value = true;
@@ -93,7 +86,7 @@ const handleClickBurgerIcon = () => {
   }
 };
 
-// watcher
+
 watch(
   () => route.path,
   async (newPath) => {
@@ -119,7 +112,7 @@ watch(
   }
 );
 
-// hooks
+
 onMounted(async () => {
   if (categoriesStore.categories.length === 0) {
     await categoriesStore.fetchCategories();
@@ -139,9 +132,8 @@ onMounted(async () => {
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
       smooth: 1.5,
-      // effects: true,
-      normalizeScroll: false, // включаем нормализацию прокрутки, вкл по умолчанию
-      ignoreMobileResize: true, // Игнорируем изменения размера на мобильных
+      normalizeScroll: false,
+      ignoreMobileResize: true,
     });
   }
 
@@ -322,7 +314,7 @@ onUnmounted(() => {
   position: relative;
   min-height: calc(100vh + 1px);
   overflow: hidden;
-  will-change: transform; // убирает дрожание при скроле
+  will-change: transform;
 }
 
 .background-blur {
@@ -370,7 +362,6 @@ onUnmounted(() => {
     border-radius: 0;
     opacity: 0;
     filter: brightness(1) saturate(0);
-    // transform: translate(0, 0) rotate(0deg);
 
     animation: move-decor 4s linear infinite alternate, about 0.5s linear forwards, about-mask 1s 0.7s forwards;
     animation-play-state: paused, running, running;
@@ -388,31 +379,12 @@ onUnmounted(() => {
     }
   }
 
-
-  // mix-blend-mode: multiply;
-  // mix-blend-mode: screen;
-  // mix-blend-mode: overlay;
-  // mix-blend-mode: darken;
-  // mix-blend-mode: lighten;
-  // mix-blend-mode: color-dodge;
-  // mix-blend-mode: color-burn;
-  // mix-blend-mode: hard-light;
-  // mix-blend-mode: soft-light;
-  // mix-blend-mode: difference;
-  // mix-blend-mode: exclusion;
-  // mix-blend-mode: hue;
-  // mix-blend-mode: saturation;
-  // mix-blend-mode: color;
-  // mix-blend-mode: luminosity;
-
-
   &--categories {
     border-radius: 0;
     filter: saturate(1) brightness(25%);
 
     &::before {
       animation: categories-decor 1.5s linear forwards;
-      background-color: red;
     }
   }
 }
@@ -427,9 +399,6 @@ onUnmounted(() => {
   animation: header-init 0.5s linear;
 }
 
-@keyframes categories {
-  
-}
 
 @keyframes contact-decor {
   0% {

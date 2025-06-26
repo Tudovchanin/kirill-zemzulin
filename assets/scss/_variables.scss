@@ -1,12 +1,12 @@
 :root {
-  // базовая палитра
+
   --color-1: hsl(0, 0%, 100%);
   --color-2: hsl(285, 77%, 83%);
   --color-3: hsl(0, 0%, 80%);
   --color-4: hsl(0, 0%, 12%);
   --color-5: hsl(0, 0%, 7%);
 
-  // цвета
+
   --color-primary: var(--color-5);
   --color-secondary: var(--color-4);
   --color-light-base: var(--color-1);
@@ -14,11 +14,11 @@
   --color-text-primary: var(--color-1);
   --color-text-secondary: var(--color-3);
 
-  // z-index
+
   --z-index-100: 100;
   --z-index-1000: 1000;
 
-  // блоки 
+
   --bg-header: hsla(0, 0%, 18%, 0.654);
   --logo: var(--color-accent-primary);
   --burger: var(--color-light-base);
@@ -29,26 +29,24 @@
   --bg-card: var(--color-secondary);
   --footer: var(--color-secondary);
 
-  // шрифты
+
   --adaptive-font-16-30: clamp(16px, 2vw, 30px);
   --adaptive-font-16-20: clamp(16px, 2vw, 20px);
   --adaptive-font-24-30: clamp(24px, 2vw, 30px);
 
-  // отступы
+
   --base-unit: 8px;
   --gap-heading-main: calc(var(--base-unit) * 4);
   --gap-heading-section: calc(var(--base-unit) * 3);
   --gap-heading-card: calc(var(--base-unit) * 2);
   --gap-text: calc(var(--base-unit) * 1);
 
-  /* Карточки */
   --gap-card-outer: calc(var(--base-unit) * 5);
   --gap-card-inner: calc(var(--base-unit) * 3);
 
-  /* Списки */
   --gap-list-item: var(--base-unit);
 
-  // bg img
+
   --hero-bg: url("/assets/images/hero-home.jpg");
   --about-bg: url("/assets/images/hero-about.jpg");
 }

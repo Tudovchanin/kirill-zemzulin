@@ -21,9 +21,7 @@ useHead({
 });
 
 const categoriesStore = useCategoriesStore();
-// const contactStore = useContactStore();
 const hoverStore = useHoverStore();
-// const appConfig = useAppConfig()
 
 const activePhotoCategory = ref(false);
 
@@ -135,7 +133,6 @@ const handleMediaQueryChange = (e: MediaQueryListEvent) => {
 
     animationsMediaQueryChange.length = 0;
     scrollTriggersMediaQueryChange.length = 0;
-    // useGsap.set(elementsImagesCategory, { clearProps: "opacity" });
   }
 };
 const handleOutCategory = () => {
@@ -164,9 +161,6 @@ onMounted(() => {
 
   initAnimateCardCategoriesScroll();
 
-  // const draggable = new useDraggable('#id', {
-  //   type: "y",
-  // });
 
   if (categoriesStore.categories.length && !animateCardCategoriesScroll) {
     animateCardCategoriesScroll = initAnimateCardCategoriesScroll();
@@ -211,64 +205,14 @@ onUnmounted(() => {
     </h1>
     <section>
       <h2 class="sr-only">Категории фотографий</h2>
-
-      <!-- <div class="categories page-padding-y">
-        <div class="categories__container-img appear">
-          <NuxtImg
-            src="/assets/images/portrait-6.jpg"
-            width="550"
-            height="800"
-            sizes="md:700"
-            class="categories__img"
-
-          />
-        </div>
-        <div class="categories__container-img appear">
-          <NuxtImg
-            src="/assets/images/portrait-6.jpg"
-            width="550"
-            height="800"
-            sizes="md:700"
-            class="categories__img"
-
-          />
-        </div>
-        <div class="categories__container-img appear">
-          <NuxtImg
-            src="/assets/images/portrait-6.jpg"
-            width="550"
-            height="800"
-            sizes="md:700"
-            class="categories__img"
-          />
-        </div>
-      </div> -->
-
-      <ul
-        v-if="categoriesStore.categories.length"
-        class="categories page-padding-y"
-      >
-        <li
-          v-for="(category, index) in categoriesStore.categories"
-          :key="category._id"
-          class="categories__container-img"
-        >
-          <NuxtLink
-            :to="`/categories/${CATEGORY_SLUG_MAP[category.title]}`"
-            class="categories__link"
-            @mouseenter="handleInCategory"
-            @mouseleave="handleOutCategory"
-          >
-            <NuxtImg
-              draggable="false"
-              :src="category.titleImageUrl"
-              width="550"
-              height="800"
-              class="categories__img appear"
-              :class="{ [`appear--${index}`]: loadImg[index] }"
-              :alt="loadImg[index] ? category.title : ''"
-              @load="handleLoadImg(index)"
-            />
+      <ul v-if="categoriesStore.categories.length" class="categories page-padding-y">
+        <li v-for="(category, index) in categoriesStore.categories" :key="category._id"
+          class="categories__container-img">
+          <NuxtLink :to="`/categories/${CATEGORY_SLUG_MAP[category.title]}`" class="categories__link"
+            @mouseenter="handleInCategory" @mouseleave="handleOutCategory">
+            <NuxtImg draggable="false" :src="category.titleImageUrl" width="550" height="800"
+              class="categories__img appear" :class="{ [`appear--${index}`]: loadImg[index] }"
+              :alt="loadImg[index] ? category.title : ''" @load="handleLoadImg(index)" />
             <h3 v-show="loadImg[index]" class="categories__title">
               {{ category.title }}
             </h3>
@@ -277,79 +221,24 @@ onUnmounted(() => {
       </ul>
       <template v-else>
         <ul class="categories page-padding-y">
-          <li
-            v-for="category in CATEGORY_SLUG_MAP"
-            :key="category"
-            class="categories__container-img"
-          >
+          <li v-for="category in CATEGORY_SLUG_MAP" :key="category" class="categories__container-img">
             <div class="categories__loader">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                <rect
-                  fill="#000000"
-                  stroke="#000000"
-                  stroke-width="11"
-                  width="30"
-                  height="30"
-                  x="25"
-                  y="85"
-                >
-                  <animate
-                    attributeName="opacity"
-                    calcMode="spline"
-                    dur="2"
-                    values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="-.4"
-                  />
+                <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="25" y="85">
+                  <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4" />
                 </rect>
-                <rect
-                  fill="#000000"
-                  stroke="#000000"
-                  stroke-width="11"
-                  width="30"
-                  height="30"
-                  x="85"
-                  y="85"
-                >
-                  <animate
-                    attributeName="opacity"
-                    calcMode="spline"
-                    dur="2"
-                    values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="-.2"
-                  />
+                <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="85" y="85">
+                  <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2" />
                 </rect>
-                <rect
-                  fill="#000000"
-                  stroke="#000000"
-                  stroke-width="11"
-                  width="30"
-                  height="30"
-                  x="145"
-                  y="85"
-                >
-                  <animate
-                    attributeName="opacity"
-                    calcMode="spline"
-                    dur="2"
-                    values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="0"
-                  />
+                <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="145" y="85">
+                  <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0" />
                 </rect>
               </svg>
             </div>
-            <NuxtImg
-              :src="PLUG"
-              width="550"
-              height="800"
-              sizes="md:700"
-              alt="Загрузка изображения..."
-            />
+            <NuxtImg :src="PLUG" width="550" height="800" sizes="md:700" alt="Загрузка изображения..." />
           </li>
         </ul>
       </template>
@@ -369,9 +258,7 @@ onUnmounted(() => {
         <span id="typed"></span>
       </div>
 
-      <NuxtLink to="/contact" class="about-home__link base-btn"
-        >Контакты</NuxtLink
-      >
+      <NuxtLink to="/contact" class="about-home__link base-btn">Контакты</NuxtLink>
     </section>
   </div>
 </template>
@@ -393,6 +280,7 @@ onUnmounted(() => {
     flex-basis: 33.333%;
     line-height: 0;
     cursor: pointer;
+
     & img {
       width: 100%;
     }
@@ -404,19 +292,20 @@ onUnmounted(() => {
 
   &__link {
     opacity: 0.95;
+
     @media (max-width: 768px) {
       opacity: 1;
     }
+
     @media (hover: hover) {
       transition: transform 0.3s, opacity 0.3s;
+
       &:hover {
         opacity: 1;
-       transform: scale(1.02);
+        transform: scale(1.02);
       }
 
-      &:hover .categories__title {
-
-      }
+      &:hover .categories__title {}
     }
   }
 
@@ -443,28 +332,10 @@ onUnmounted(() => {
     transform: translate(-50%, -50%);
     pointer-events: none;
     animation: title 0.5s 0.5s forwards;
-
-    @media (hover: hover) {
-      // transition: background-color 0.3s ease-in, color 0.3s ease-out;
-    }
   }
 }
 
-// mix-blend-mode: multiply;
-// mix-blend-mode: screen;
-// mix-blend-mode: overlay;
-// mix-blend-mode: darken;
-// mix-blend-mode: lighten;
-// mix-blend-mode: color-dodge;
-// mix-blend-mode: color-burn;
-// mix-blend-mode: hard-light;
-// mix-blend-mode: soft-light;
-// mix-blend-mode: difference;
-// mix-blend-mode: exclusion;
-// mix-blend-mode: hue;
-// mix-blend-mode: saturation;
-// mix-blend-mode: color;
-// mix-blend-mode: luminosity;
+
 
 .about-home {
   display: grid;
@@ -527,75 +398,29 @@ onUnmounted(() => {
     }
   }
 }
-// & img {
-//       width: 100%;
-//       filter: blur(0) saturate(0.34);
-
-//       @media (hover: hover) {
-//         transition: filter 0.5s, transform 0.5s;
-
-//         &:hover {
-//           filter: blur(1px) saturate(1);
-//           transform: scale(1.05);
-//         }
-
-//         &:hover+.categories__title {
-//           background-color: var(--color-primary);
-//           color: var(--color-accent-primary);
-//         }
-//       }
-//     }
-
-
-
 
 .appear {
   opacity: 0;
 
   &--0 {
     animation: smooth-appear 0.2s linear forwards;
-
-    @media (hover: hover) {
-      &:hover {
-      }
-    }
   }
 
   &--1 {
     animation: smooth-appear 0.3s linear forwards;
-  
-
-    @media (hover: hover) {
-      &:hover {
-      }
-    }
   }
 
   &--2 {
     animation: smooth-appear 0.4s linear forwards;
 
-    @media (hover: hover) {
-      &:hover {
-      }
-    }
   }
 }
 
-// .appear:nth-child(3n + 1) img {
-//   animation: smooth-appear 0.2s linear;
-// }
-
-// .appear:nth-child(3n + 2) img {
-//   animation: smooth-appear 0.4s linear;
-// }
-
-// .appear:nth-child(3n + 3) img {
-//   animation: smooth-appear 0.6s linear;
-// }
 
 .about-animate {
   opacity: 0;
 }
+
 @keyframes hover-img {
   from {
     transform: scale(1);
@@ -605,6 +430,7 @@ onUnmounted(() => {
     transform: scale(1.05);
   }
 }
+
 @keyframes smooth-appear {
   0% {
     opacity: 0;
@@ -627,27 +453,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-<!-- Реактивность в Vue 3: объекты (reactive) и ссылки (ref)
-reactive(obj)
-Превращает объект obj в реактивный Proxy, Vue отслеживает все существующие свойства объекта и вложенные объекты.
-Важно: Vue не отслеживает динамическое добавление новых свойств в уже реактивный объект, если они не были объявлены изначально. Поэтому, если вы добавляете новые ключи в reactive({}) после инициализации, изменения не вызовут обновления компонентов.
-
-ref(value)
-Создаёт реактивную ссылку на значение value. Если value — объект или массив, Vue оборачивает его в реактивный Proxy (как reactive).
-При этом:
-
-Если ref содержит массив, Vue отслеживает изменения элементов массива (например, arr.value = true вызовет реактивное обновление).
-
-Если ref содержит объект, динамическое добавление новых свойств в этот объект также не будет отслеживаться, как и в reactive.
-
-Отслеживание динамических свойств
-Для динамического добавления новых свойств в объекты реактивность не работает автоматически. Рекомендуется:
-
-Заранее объявлять все необходимые свойства.
-
-Или использовать массивы, если нужно отслеживать множество элементов по индексам.
-
-Или при необходимости создавать новый объект с нужными свойствами (копирование с добавлением новых ключей), чтобы Vue отследил замену объекта.
-
- -->
