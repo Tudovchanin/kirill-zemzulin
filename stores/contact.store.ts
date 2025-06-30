@@ -15,12 +15,12 @@ export const useContactStore = defineStore('contact', () => {
     try {
       
       contact.value = await sanity.fetch(CONTACT_QUERY) as Contact;
-
-      
+      return contact.value;
 
     } catch (e: unknown) {
       if (e instanceof Error) error.value = e.message
       else error.value =  String(e);
+      return contact.value;
     } finally {
       loading.value = false;
     }

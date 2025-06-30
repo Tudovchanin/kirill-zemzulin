@@ -5,19 +5,19 @@ import { CATEGORY_SEO } from "~/constants/seo.constants";
 
 const baseUrl = useBaseUrl();
 
-
 const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const popUpStore = usePopUpStore();
-
 
 const slug = ref<Slug | null>(null);
 
 let countLoad = 0;
 
 const lengthImages = computed(() => {
-    return slug.value && categoriesStore.imagesByCategory[slug.value]?.length || 0;
-})
+  return (
+    (slug.value && categoriesStore.imagesByCategory[slug.value]?.length) || 0
+  );
+});
 
 watch(
   () => slug.value,
@@ -41,11 +41,10 @@ watch(
   }
 );
 
-
 const masonryRef = ref<HTMLElement | null>(null);
 const photoRef = ref<HTMLElement[] | []>([]);
 
-  const handleLoadImage = () => {
+const handleLoadImage = () => {
   if (!slug.value || !lengthImages.value) return;
 
   countLoad++;
@@ -57,7 +56,6 @@ const photoRef = ref<HTMLElement[] | []>([]);
   }
 };
 
-
 let animateLoadPhoto: gsap.core.Tween | null = null;
 const masonryImagesRef = ref<HTMLElement[]>([]);
 
@@ -67,7 +65,6 @@ const initAnimateLoadAnimation = () => {
     {
       opacity: 0,
       x: (index) => (index % 2 === 0 ? 1500 : -1500),
-
     },
     {
       opacity: 1,
@@ -89,7 +86,6 @@ const handleClickImg = (img: Image) => {
   popUpStore.setPopUpImg(img);
 };
 
-
 onMounted(async () => {
   if (route.params?.slug) {
     slug.value = route.params.slug as Slug;
@@ -100,11 +96,12 @@ onUnmounted(() => {
     animateLoadPhoto?.kill();
   }
 });
-
-
 </script>
 <template>
-  <div ref="masonryRef" class="photos-category page-padding-x page-padding-y width-page x-center">
+  <div
+    ref="masonryRef"
+    class="photos-category page-padding-x page-padding-y width-page x-center"
+  >
     <h1 class="photos-category__title">
       {{ slug && SLUG_CATEGORY_MAP[slug] }}
     </h1>
@@ -114,28 +111,92 @@ onUnmounted(() => {
       </h2>
       <template v-if="categoriesStore.imagesByCategory && slug">
         <ul>
-          <li v-for="(img, index) in categoriesStore.imagesByCategory[slug!]" :key="img._id" ref="masonryImagesRef"
-            class="masonry__item" :class="{ 'animate-photo': index < 7 }" @click.stop="handleClickImg(img)">
-            <NuxtImg ref="photoRef" draggable="false" :src="img.url" :width="img.width" :height="img.height"
-              sizes="md:700" class="masonry__img" :alt="img.title || 'картинка без описания'"
-              @load="handleLoadImage" :loading="index >= 7 ? 'lazy' : 'eager'" />
+          <li
+            v-for="(img, index) in categoriesStore.imagesByCategory[slug!]"
+            :key="img._id"
+            ref="masonryImagesRef"
+            class="masonry__item"
+            :class="{ 'animate-photo': index < 7 }"
+            @click.stop="handleClickImg(img)"
+          >
+            <NuxtImg
+              ref="photoRef"
+              draggable="false"
+              :src="img.url"
+              :width="img.width"
+              :height="img.height"
+              sizes="md:700"
+              class="masonry__img"
+              :alt="img.title || 'картинка без описания'"
+              @load="handleLoadImage"
+              :loading="index >= 7 ? 'lazy' : 'eager'"
+            />
           </li>
         </ul>
       </template>
 
       <div v-else class="masonry__skeleton">
-        <svg class="skeleton-loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-          <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="25" y="85">
-            <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1"
-              repeatCount="indefinite" begin="-.4" />
+        <svg
+          class="skeleton-loader"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 200 200"
+        >
+          <rect
+            fill="#000000"
+            stroke="#000000"
+            stroke-width="11"
+            width="30"
+            height="30"
+            x="25"
+            y="85"
+          >
+            <animate
+              attributeName="opacity"
+              calcMode="spline"
+              dur="2"
+              values="1;0;1;"
+              keySplines=".5 0 .5 1;.5 0 .5 1"
+              repeatCount="indefinite"
+              begin="-.4"
+            />
           </rect>
-          <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="85" y="85">
-            <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1"
-              repeatCount="indefinite" begin="-.2" />
+          <rect
+            fill="#000000"
+            stroke="#000000"
+            stroke-width="11"
+            width="30"
+            height="30"
+            x="85"
+            y="85"
+          >
+            <animate
+              attributeName="opacity"
+              calcMode="spline"
+              dur="2"
+              values="1;0;1;"
+              keySplines=".5 0 .5 1;.5 0 .5 1"
+              repeatCount="indefinite"
+              begin="-.2"
+            />
           </rect>
-          <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="145" y="85">
-            <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1"
-              repeatCount="indefinite" begin="0" />
+          <rect
+            fill="#000000"
+            stroke="#000000"
+            stroke-width="11"
+            width="30"
+            height="30"
+            x="145"
+            y="85"
+          >
+            <animate
+              attributeName="opacity"
+              calcMode="spline"
+              dur="2"
+              values="1;0;1;"
+              keySplines=".5 0 .5 1;.5 0 .5 1"
+              repeatCount="indefinite"
+              begin="0"
+            />
           </rect>
         </svg>
       </div>
@@ -155,7 +216,6 @@ onUnmounted(() => {
   }
 }
 
-
 .masonry {
   columns: 3 500px;
   min-height: 10000px;
@@ -163,7 +223,8 @@ onUnmounted(() => {
 
   &__item {
     text-align: center;
-    cursor: pointer;  }
+    cursor: pointer;
+  }
 
   &__item:not(:last-child) {
     display: block;
@@ -194,7 +255,6 @@ onUnmounted(() => {
     }
   }
 }
-
 
 .animate-photo {
   opacity: 0;

@@ -178,10 +178,11 @@ const handleInCategory = () => {
   hoverStore.setHoverCategory(true);
 };
 
-const loadImg = ref<Record<number, boolean>>({});
+const loadImg = ref<boolean[]>(categoriesStore.categories.map(() => false));
 const handleLoadImg = (index: number) => {
   loadImg.value[index] = true;
 };
+
 
 onMounted(() => {
   mobileWidthMediaQuery = window.matchMedia("(max-width: 768px)");
@@ -192,8 +193,6 @@ onMounted(() => {
       matches: mobileWidthMediaQuery.matches,
     } as MediaQueryListEvent);
   }
-
-  // initAnimateCardCategoriesScroll();
 
   if (categoriesStore.categories.length && !animateCardCategoriesScroll) {
     animateCardCategoriesScroll = initAnimateCardCategoriesScroll();
@@ -247,6 +246,7 @@ onUnmounted(() => {
           class="categories__container-img"
         >
           <NuxtLink
+            v-show="loadImg[index]"
             :to="`/categories/${CATEGORY_SLUG_MAP[category.title]}`"
             class="categories__link"
             @mouseenter="handleInCategory"
@@ -274,10 +274,88 @@ onUnmounted(() => {
               {{ category.title }}
             </h3>
           </NuxtLink>
+
+          <div v-show="!loadImg[index]" class="categories__container-img">
+            <div class="categories__loader">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                <rect
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="11"
+                  width="30"
+                  height="30"
+                  x="25"
+                  y="85"
+                >
+                  <animate
+                    attributeName="opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="-.4"
+                  />
+                </rect>
+                <rect
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="11"
+                  width="30"
+                  height="30"
+                  x="85"
+                  y="85"
+                >
+                  <animate
+                    attributeName="opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="-.2"
+                  />
+                </rect>
+                <rect
+                  fill="#000000"
+                  stroke="#000000"
+                  stroke-width="11"
+                  width="30"
+                  height="30"
+                  x="145"
+                  y="85"
+                >
+                  <animate
+                    attributeName="opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0;1;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="0"
+                  />
+                </rect>
+              </svg>
+            </div>
+            <NuxtImg
+              v-if="device === 'desc'"
+              :src="PLUG"
+              :width="imageSizes.width"
+              :height="imageSizes.height"
+              alt="Загрузка изображения..."
+            />
+            <NuxtImg
+              v-else-if="device === 'mobile'"
+              :src="PLUG"
+              :width="imageSizes.width"
+              :height="imageSizes.height"
+              alt="Загрузка изображения..."
+            />
+          </div>
         </li>
       </ul>
 
-      <template v-else>
+      <!-- <template v-else>
         <ul class="categories page-padding-y">
           <li
             v-for="category in CATEGORY_SLUG_MAP"
@@ -358,10 +436,10 @@ onUnmounted(() => {
               width="450"
               height="640"
               alt="Загрузка изображения..."
-            /> 
+            />
           </li>
         </ul>
-      </template>
+      </template> -->
     </section>
 
     <section ref="aboutHomeRef" class="about-home about-home--mb about-animate">

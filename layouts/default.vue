@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { useScrollSmoother } from "#gsap";
 
-type LinkDrop = {
-  link: string;
-  title: string;
-};
+
 const nuxtApp = useNuxtApp()
 const scrollSmoother = nuxtApp.$scrollSmoother as ScrollSmoother | undefined
 
@@ -98,13 +95,18 @@ watch(
   }
 );
 
+
+await useAsyncData('categories', () => categoriesStore.fetchCategories());
+await useAsyncData('contacts', () => contactStore.fetchContact());
+
+
 onMounted(async () => {
-  if (categoriesStore.categories.length === 0) {
-    await categoriesStore.fetchCategories();
-  }
-  if (!contactStore.contact) {
-    await contactStore.fetchContact();
-  }
+  // if (categoriesStore.categories.length === 0) {
+  //   await categoriesStore.fetchCategories();
+  // }
+  // if (!contactStore.contact) {
+  //   await contactStore.fetchContact();
+  // }
 
 
   window.addEventListener("scroll", handleScroll);
