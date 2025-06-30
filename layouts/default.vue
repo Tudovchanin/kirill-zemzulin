@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { CATEGORY_SLUG_MAP } from "~/constants/mappings.constants";
 import { useScrollSmoother } from "#gsap";
 
 type LinkDrop = {
   link: string;
   title: string;
 };
+const nuxtApp = useNuxtApp()
+const scrollSmoother = nuxtApp.$scrollSmoother as ScrollSmoother | undefined
 
 const route = useRoute();
 
@@ -13,7 +14,6 @@ const categoriesStore = useCategoriesStore();
 const contactStore = useContactStore();
 const popUpStore = usePopUpStore();
 
-const dropMenuData = ref<LinkDrop[]>([]);
 
 const isAboutPage = ref(false);
 const isContactPage = ref(false);
@@ -26,7 +26,6 @@ const burgerBtnRef = ref();
 const itemDropRef = ref();
 const dropMenuComponentRef = ref();
 
-let scrollSmoother: null | ScrollSmoother = null;
 
 let scrollTimeout: ReturnType<typeof setTimeout>;
 let noScrollTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -80,15 +79,15 @@ const toggleBlockScroll = (value: boolean) => {
   document.documentElement.classList.toggle("no-scroll", value);
 };
 
-const initLinks = (data: string) => {};
 
 watch(
   () => route.path,
-  (newPath) => {
-    // await nextTick();
+ async (newPath) => {
+    await nextTick();
     isAboutPage.value = newPath === "/about";
     isContactPage.value = newPath === "/contact";
     isCategories.value = route.path.startsWith("/categories");
+  
   },
   { immediate: true }
 );
@@ -106,15 +105,7 @@ onMounted(async () => {
   if (!contactStore.contact) {
     await contactStore.fetchContact();
   }
-  if (!scrollSmoother) {
-    scrollSmoother = new useScrollSmoother({
-      wrapper: "#smooth-wrapper",
-      content: "#smooth-content",
-      smooth: 1.5,
-      normalizeScroll: false,
-      ignoreMobileResize: true,
-    });
-  }
+
 
   window.addEventListener("scroll", handleScroll);
 });
@@ -125,9 +116,6 @@ onUnmounted(() => {
     noScrollTimeout = null;
   }
 
-  if (scrollSmoother) {
-    scrollSmoother.kill();
-  }
 });
 </script>
 
@@ -347,8 +335,8 @@ onUnmounted(() => {
 
   &__close {
     position: absolute;
-    top: 50px;
-    right: 50px;
+    top: 20px;
+    left: 12px;
     display: flex;
     color: white;
     background-color: transparent;
@@ -423,7 +411,7 @@ onUnmounted(() => {
     filter: brightness(1) saturate(0);
 
     animation: move-decor 4s linear infinite alternate,
-      about 0.3s ease-in forwards, about-mask 0.6s ease-out 0.5s forwards;
+      about 0.5s ease-in  forwards, about-mask 0.5s ease-out 0.5s forwards;
     animation-play-state: paused, running, running;
     animation: name duration timing-function delay iteration-count direction
       fill-mode;

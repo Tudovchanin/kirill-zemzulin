@@ -120,7 +120,7 @@ defineExpose({
     overflow: hidden;
 
   @media (max-width: 768px) {
-    // gap: 20px;
+    gap: 25px;
   }
 
     &--visible {

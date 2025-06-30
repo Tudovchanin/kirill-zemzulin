@@ -115,7 +115,6 @@ const handleSubmit = async () => {
     errorMessage.value = resultSend.error || "неизвестная ошибка";
   }
 };
-
 const handleCloseMessage = () => {
   errorMessage.value = "";
   successMessage.value = "";
@@ -125,6 +124,8 @@ const handleShowForm = () => {
   resetForm();
   resetMessage();
 };
+
+
 </script>
 <template>
   <div

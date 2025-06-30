@@ -1,10 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import type {RouteLocationNormalized} from '#vue-router'
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
-  site: {
-    url: process.env.NUXT_PUBLIC_BASE_URL,
-    name: process.env.NUXT_PUBLIC_SITE_NAME,
-  },
+
   nitro: {
     compressPublicAssets: true,
   },
@@ -18,7 +17,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "nuxt-typedjs",
     "nuxt-mail",
-    "@nuxtjs/sitemap",
+
   ],
   runtimeConfig: {
     mail: {
@@ -155,4 +154,5 @@ export default defineNuxtConfig({
       ],
     },
   },
+ 
 });
