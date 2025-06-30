@@ -1,6 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
+  site: {
+    url: process.env.NUXT_PUBLIC_BASE_URL,
+    name: process.env.NUXT_PUBLIC_SITE_NAME,
+  },
   nitro: {
     compressPublicAssets: true,
   },
@@ -14,6 +18,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "nuxt-typedjs",
     "nuxt-mail",
+    "@nuxtjs/sitemap",
   ],
   runtimeConfig: {
     mail: {
@@ -31,7 +36,7 @@ export default defineNuxtConfig({
       },
     },
     public: {
-      baseURL: "",
+      baseURL: process.env.NUXT_PUBLIC_BASE_URL || "http://localhost:3000",
     },
   },
   devtools: { enabled: false },
@@ -45,11 +50,11 @@ export default defineNuxtConfig({
     strict: true,
   },
   gsap: {
-    composables: true, 
+    composables: true,
     extraPlugins: {
-      scrollTrigger: true, 
-      draggable: true, 
-      scrollTo: true, 
+      scrollTrigger: true,
+      draggable: true,
+      scrollTo: true,
       motionPath: true,
       text: true,
       pixi: true,
@@ -61,7 +66,7 @@ export default defineNuxtConfig({
     },
   },
   image: {
-    domains: ["cdn.sanity.io"], 
+    domains: ["cdn.sanity.io"],
     screens: {
       xs: 320,
       sm: 640,

@@ -4,6 +4,8 @@ import { SLUG_CATEGORY_MAP } from "~/constants/mappings.constants";
 import { CATEGORY_SEO } from "~/constants/seo.constants";
 
 const baseUrl = useBaseUrl();
+
+
 const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const popUpStore = usePopUpStore();
@@ -11,17 +13,23 @@ const popUpStore = usePopUpStore();
 
 const slug = ref<Slug | null>(null);
 
+let countLoad = 0;
+
+const lengthImages = computed(() => {
+    return slug.value && categoriesStore.imagesByCategory[slug.value]?.length || 0;
+})
 
 watch(
   () => slug.value,
   (newSlug) => {
     if (newSlug) {
+      countLoad = 0;
       useSeoMeta({
         title: CATEGORY_SEO[newSlug].title,
         description: CATEGORY_SEO[newSlug].description,
         ogTitle: CATEGORY_SEO[newSlug].title,
         ogDescription: CATEGORY_SEO[newSlug].description,
-        ogImage: CATEGORY_SEO[newSlug].imageUrl,
+        ogImage: baseUrl + CATEGORY_SEO[newSlug].imageUrl,
         ogType: CATEGORY_SEO[newSlug].ogType || "website",
         twitterCard: CATEGORY_SEO[newSlug].twitterCard || "summary_large_image",
       });
@@ -37,12 +45,14 @@ watch(
 const masonryRef = ref<HTMLElement | null>(null);
 const photoRef = ref<HTMLElement[] | []>([]);
 
+  const handleLoadImage = () => {
+  if (!slug.value || !lengthImages.value) return;
 
-let imageLoadCount = 0;
-const handleLoadImage = () => {
-  if (!slug.value) return;
-  ++imageLoadCount;
-  if (categoriesStore.imagesByCategory[slug.value]?.length === imageLoadCount) {
+  countLoad++;
+
+  const needToLoad = Math.min(lengthImages.value, 7);
+
+  if (countLoad === needToLoad) {
     animateLoadPhoto = initAnimateLoadAnimation();
   }
 };
@@ -53,16 +63,15 @@ const masonryImagesRef = ref<HTMLElement[]>([]);
 
 const initAnimateLoadAnimation = () => {
   const animate = useGsap.fromTo(
-    ".masonry__item",
+    ".animate-photo",
     {
       opacity: 0,
       x: (index) => (index % 2 === 0 ? 1500 : -1500),
-      filter: "blur(200px)",
+
     },
     {
       opacity: 1,
       x: 0,
-      filter: "blur(0px)",
       duration: 0.6,
       ease: "expo.out",
       stagger: 0.05,
@@ -91,12 +100,11 @@ onUnmounted(() => {
     animateLoadPhoto?.kill();
   }
 });
+
+
 </script>
 <template>
-  <div
-    ref="masonryRef"
-    class="photos-category page-padding-x page-padding-y width-page x-center"
-  >
+  <div ref="masonryRef" class="photos-category page-padding-x page-padding-y width-page x-center">
     <h1 class="photos-category__title">
       {{ slug && SLUG_CATEGORY_MAP[slug] }}
     </h1>
@@ -106,90 +114,28 @@ onUnmounted(() => {
       </h2>
       <template v-if="categoriesStore.imagesByCategory && slug">
         <ul>
-          <li
-            v-for="(img) in categoriesStore.imagesByCategory[slug!]"
-            :key="img._id"
-            ref="masonryImagesRef"
-            class="masonry__item"
-            @click.stop="handleClickImg(img)"
-          >
-            <NuxtImg
-              ref="photoRef"
-              draggable="false"
-              :src="img.url"
-              :width="img.width"
-              :height="img.height"
-              sizes="md:700"
-              class="masonry__img"
-              :alt="img.description"
-              @load="handleLoadImage"
-            />
+          <li v-for="(img, index) in categoriesStore.imagesByCategory[slug!]" :key="img._id" ref="masonryImagesRef"
+            class="masonry__item" :class="{ 'animate-photo': index < 7 }" @click.stop="handleClickImg(img)">
+            <NuxtImg ref="photoRef" draggable="false" :src="img.url" :width="img.width" :height="img.height"
+              sizes="md:700" class="masonry__img" :alt="img.title || 'картинка без описания'"
+              @load="handleLoadImage" :loading="index >= 7 ? 'lazy' : 'eager'" />
           </li>
         </ul>
       </template>
 
       <div v-else class="masonry__skeleton">
-        <svg
-          class="skeleton-loader"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 200 200"
-        >
-          <rect
-            fill="#000000"
-            stroke="#000000"
-            stroke-width="11"
-            width="30"
-            height="30"
-            x="25"
-            y="85"
-          >
-            <animate
-              attributeName="opacity"
-              calcMode="spline"
-              dur="2"
-              values="1;0;1;"
-              keySplines=".5 0 .5 1;.5 0 .5 1"
-              repeatCount="indefinite"
-              begin="-.4"
-            />
+        <svg class="skeleton-loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+          <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="25" y="85">
+            <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1"
+              repeatCount="indefinite" begin="-.4" />
           </rect>
-          <rect
-            fill="#000000"
-            stroke="#000000"
-            stroke-width="11"
-            width="30"
-            height="30"
-            x="85"
-            y="85"
-          >
-            <animate
-              attributeName="opacity"
-              calcMode="spline"
-              dur="2"
-              values="1;0;1;"
-              keySplines=".5 0 .5 1;.5 0 .5 1"
-              repeatCount="indefinite"
-              begin="-.2"
-            />
+          <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="85" y="85">
+            <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1"
+              repeatCount="indefinite" begin="-.2" />
           </rect>
-          <rect
-            fill="#000000"
-            stroke="#000000"
-            stroke-width="11"
-            width="30"
-            height="30"
-            x="145"
-            y="85"
-          >
-            <animate
-              attributeName="opacity"
-              calcMode="spline"
-              dur="2"
-              values="1;0;1;"
-              keySplines=".5 0 .5 1;.5 0 .5 1"
-              repeatCount="indefinite"
-              begin="0"
-            />
+          <rect fill="#000000" stroke="#000000" stroke-width="11" width="30" height="30" x="145" y="85">
+            <animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1"
+              repeatCount="indefinite" begin="0" />
           </rect>
         </svg>
       </div>
@@ -198,23 +144,6 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.container-canvas {
-  position: absolute;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100vh;
-
-  &__canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-}
-
 .photos-category {
   position: relative;
 
@@ -226,16 +155,15 @@ onUnmounted(() => {
   }
 }
 
+
 .masonry {
   columns: 3 500px;
   min-height: 10000px;
   animation: photo-masonry 0.5s linear forwards;
 
   &__item {
-    opacity: 0;
     text-align: center;
-    cursor: pointer;
-  }
+    cursor: pointer;  }
 
   &__item:not(:last-child) {
     display: block;
@@ -244,11 +172,13 @@ onUnmounted(() => {
   }
 
   &__img {
+    box-shadow: 0 0 4px 8px var(--color-primary);
+
     @media (hover: hover) {
       transition: transform 0.3s;
 
       &:hover {
-      transform: scale(1.02);
+        transform: scale(1.02);
       }
     }
   }
@@ -263,6 +193,11 @@ onUnmounted(() => {
       width: 100%;
     }
   }
+}
+
+
+.animate-photo {
+  opacity: 0;
 }
 
 @keyframes photo-masonry {

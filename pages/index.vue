@@ -4,14 +4,21 @@ import { CATEGORY_SLUG_MAP } from "~/constants/mappings.constants";
 import { PLUG } from "~/constants/app.constants";
 import { HOME_SEO } from "~/constants/seo.constants";
 
+type Device = "desc" | "mobile";
+
+type AnimationController = {
+  removeAnimate: () => void;
+};
+
 const baseUrl = useBaseUrl();
+const absoluteImageUrl = baseUrl + HOME_SEO.imageUrl;
 
 useSeoMeta({
   title: HOME_SEO.title,
   description: HOME_SEO.description,
   ogTitle: HOME_SEO.title,
   ogDescription: HOME_SEO.description,
-  ogImage: HOME_SEO.imageUrl,
+  ogImage: absoluteImageUrl,
   ogType: HOME_SEO.ogType || "website",
   twitterCard: HOME_SEO.twitterCard || "summary_large_image",
 });
@@ -27,13 +34,26 @@ const activePhotoCategory = ref(false);
 
 const aboutHomeRef = ref();
 
-const scrollTriggersMediaQueryChange: ScrollTrigger[] = [];
-const animationsMediaQueryChange: gsap.core.Tween[] = [];
+const device = ref<Device>("desc");
+
+const imageSizes = computed(() => {
+  switch (device.value) {
+    case "mobile":
+      return { width: 450, height: 640 };
+    case "desc":
+      return { width: 550, height: 800 };
+    default:
+      return { width: 550, height: 800 };
+  }
+});
 
 let mobileWidthMediaQuery: MediaQueryList | null = null;
+
 let animateCardCategoriesScroll: ScrollTrigger | null = null;
 let animateHomeAboutTyped: ScrollTrigger | null = null;
 let typedInstance: null | Typed = null;
+
+let animateLinkInMobile: null | AnimationController = null;
 
 let animateHomeAboutAppearance: gsap.core.Tween | null = null;
 
@@ -44,7 +64,7 @@ watch(
       await nextTick();
       animateCardCategoriesScroll = initAnimateCardCategoriesScroll();
       if (mobileWidthMediaQuery?.matches) {
-        handleMediaQueryChange({
+        handleMediaQueryMobile({
           matches: mobileWidthMediaQuery.matches,
         } as MediaQueryListEvent);
       }
@@ -107,32 +127,46 @@ const initAnimateHomeAboutAppearance = () => {
 
   return animate;
 };
-
-const handleMediaQueryChange = (e: MediaQueryListEvent) => {
+const initAnimateMobileLink = () => {
   const elementsLinksCategory = document.querySelectorAll(".categories__link");
+  const scrollTriggers: ScrollTrigger[] = [];
+  const animations: gsap.core.Tween[] = [];
 
-  if (e.matches && elementsLinksCategory.length) {
-    elementsLinksCategory.forEach((link) => {
-      const animation = useGsap.to(link, { transform: "scale(1.1)" });
-
-      const scrollTrigger = new useScrollTrigger({
-        trigger: link,
-        start: "top 150px",
-        end: "center top",
-        markers: true,
-        scrub: true,
-        animation: animation,
-      });
-
-      animationsMediaQueryChange.push(animation);
-      scrollTriggersMediaQueryChange.push(scrollTrigger);
+  elementsLinksCategory.forEach((link) => {
+    const animation = useGsap.to(link, {
+      transform: "scale(1.1) translateY(-20px)",
     });
-  } else {
-    animationsMediaQueryChange.forEach((anim) => anim.kill());
-    scrollTriggersMediaQueryChange.forEach((trigger) => trigger.kill());
 
-    animationsMediaQueryChange.length = 0;
-    scrollTriggersMediaQueryChange.length = 0;
+    const scrollTrigger = new useScrollTrigger({
+      trigger: link,
+      start: "top center",
+      end: "bottom center",
+      scrub: true,
+      animation: animation,
+    });
+
+    animations.push(animation);
+    scrollTriggers.push(scrollTrigger);
+  });
+
+  return {
+    removeAnimate() {
+      console.log("delete animate");
+
+      animations.forEach((anim) => anim.kill());
+      scrollTriggers.forEach((trigger) => trigger.kill());
+      useGsap.set(".categories__link", { clearProps: "transform" });
+    },
+  };
+};
+
+const handleMediaQueryMobile = (e: MediaQueryListEvent) => {
+  if (e.matches) {
+    animateLinkInMobile = initAnimateMobileLink();
+    device.value = "mobile";
+  } else {
+    animateLinkInMobile?.removeAnimate();
+    device.value = "desc";
   }
 };
 const handleOutCategory = () => {
@@ -151,15 +185,15 @@ const handleLoadImg = (index: number) => {
 
 onMounted(() => {
   mobileWidthMediaQuery = window.matchMedia("(max-width: 768px)");
-  mobileWidthMediaQuery.addEventListener("change", handleMediaQueryChange);
+  mobileWidthMediaQuery.addEventListener("change", handleMediaQueryMobile);
 
   if (mobileWidthMediaQuery.matches) {
-    handleMediaQueryChange({
+    handleMediaQueryMobile({
       matches: mobileWidthMediaQuery.matches,
     } as MediaQueryListEvent);
   }
 
-  initAnimateCardCategoriesScroll();
+  // initAnimateCardCategoriesScroll();
 
   if (categoriesStore.categories.length && !animateCardCategoriesScroll) {
     animateCardCategoriesScroll = initAnimateCardCategoriesScroll();
@@ -176,13 +210,11 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (mobileWidthMediaQuery) {
-    mobileWidthMediaQuery.removeEventListener("change", handleMediaQueryChange);
+    mobileWidthMediaQuery.removeEventListener("change", handleMediaQueryMobile);
   }
-
-  animationsMediaQueryChange.forEach((anim) => anim.kill());
-  scrollTriggersMediaQueryChange.forEach((trigger) => trigger.kill());
-  animationsMediaQueryChange.length = 0;
-  scrollTriggersMediaQueryChange.length = 0;
+  if (animateLinkInMobile) {
+    animateLinkInMobile.removeAnimate();
+  }
 
   if (animateCardCategoriesScroll) {
     animateCardCategoriesScroll.kill();
@@ -202,6 +234,7 @@ onUnmounted(() => {
     <h1 class="sr-only">
       Кирилл Земзюлин — фотограф портретов и лайфстайл из Мичуринска
     </h1>
+
     <section>
       <h2 class="sr-only">Категории фотографий</h2>
       <ul
@@ -221,20 +254,29 @@ onUnmounted(() => {
           >
             <NuxtImg
               draggable="false"
-              :src="category.titleImageUrl"
-              width="550"
-              height="800"
+              :src="
+                device === 'mobile'
+                  ? category.mobileTitleImageUrl
+                    ? category.mobileTitleImageUrl
+                    : category.titleImageUrl
+                  : category.titleImageUrl
+              "
+              :width="imageSizes.width"
+              :height="imageSizes.height"
               class="categories__img appear"
               :class="{ [`appear--${index}`]: loadImg[index] }"
               :alt="loadImg[index] ? 'обложка категорий фото' : ''"
               @load="handleLoadImg(index)"
+              format="webp"
             />
+
             <h3 v-show="loadImg[index]" class="categories__title">
               {{ category.title }}
             </h3>
           </NuxtLink>
         </li>
       </ul>
+
       <template v-else>
         <ul class="categories page-padding-y">
           <li
@@ -304,12 +346,19 @@ onUnmounted(() => {
               </svg>
             </div>
             <NuxtImg
+              v-if="device === 'desc'"
               :src="PLUG"
               width="550"
               height="800"
-              sizes="md:700"
               alt="Загрузка изображения..."
             />
+            <NuxtImg
+              v-else-if="device === 'mobile'"
+              :src="PLUG"
+              width="450"
+              height="640"
+              alt="Загрузка изображения..."
+            /> 
           </li>
         </ul>
       </template>
@@ -345,6 +394,7 @@ onUnmounted(() => {
   @media (max-width: 768px) {
     flex-direction: column;
     flex-wrap: nowrap;
+    align-items: center;
     margin-bottom: 100px;
   }
 
@@ -354,16 +404,13 @@ onUnmounted(() => {
     line-height: 0;
     cursor: pointer;
 
-    & img {
-      width: 100%;
-    }
-
     @media (max-width: 768px) {
-      flex-basis: 100%;
+      width: 80vw;
     }
   }
 
   &__link {
+    height: 100%;
     opacity: 0.95;
 
     @media (max-width: 768px) {
@@ -381,6 +428,10 @@ onUnmounted(() => {
       &:hover .categories__title {
       }
     }
+  }
+
+  &__img {
+    width: 100%;
   }
 
   &__loader {
@@ -523,3 +574,49 @@ onUnmounted(() => {
   }
 }
 </style>
+<!--  <picture >
+              <source
+                v-if="category.mobileTitleImageUrl"
+                media="(max-width: 600px)"
+                :srcset="category.mobileTitleImageUrl"
+                type="image/avif"
+              />
+              <source
+                v-if="category.mobileTitleImageUrl"
+                media="(max-width: 600px)"
+                :srcset="category.mobileTitleImageUrl"
+                type="image/webp"
+              />
+              <source
+                v-if="category.mobileTitleImageUrl"
+                media="(max-width: 600px)"
+                :srcset="category.mobileTitleImageUrl"
+                type="image/jpeg"
+              />
+              <source
+                media="(min-width: 601px)"
+                :srcset="category.titleImageUrl"
+                type="image/avif"
+              />
+              <source
+                media="(min-width: 601px)"
+                :srcset="category.titleImageUrl"
+                type="image/webp"
+              />
+              <source
+                media="(min-width: 601px)"
+                :srcset="category.titleImageUrl"
+                type="image/jpeg"
+              />
+              <img
+                :src="category.titleImageUrl"
+                :alt="loadImg[index] ? 'обложка категорий фото' : ''"
+                draggable="false"
+                loading="lazy"
+                width="550"
+                height="800"
+                class="categories__img appear"
+                :class="{ [`appear--${index}`]: loadImg[index] }"
+                @load="handleLoadImg(index)"
+              />
+            </picture> -->

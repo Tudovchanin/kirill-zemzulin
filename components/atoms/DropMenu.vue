@@ -17,14 +17,15 @@ const isCategoriesRoute = computed(() => {
   return route.path.startsWith(`${props.startsLink}`);
 });
 
-const activeDropMenu = ref(false);
 
-const closeMenu = () => {
-  activeDropMenu.value = false;
-};
+const { activeDropMenu, handleTouchend, handleFocus, closeMenu } = useDropdownMenu()
+
+
+
 defineExpose({
   closeMenu,
 });
+
 </script>
 <template>
   <div
@@ -33,8 +34,8 @@ defineExpose({
       props.titleClass,
       { 'router-link-exact-active': isCategoriesRoute },
     ]"
-    @focus="activeDropMenu = true"
-    @touchend="activeDropMenu = !activeDropMenu"
+    @focus="handleFocus"
+    @touchend="handleTouchend"
   >
     <div class="drop-menu__title">
       <span class="drop-menu__title-text">Проекты</span>
@@ -54,6 +55,7 @@ defineExpose({
       </div>
     </div>
     <ul
+  
       class="drop-menu__list"
       :class="{ 'drop-menu__list--visible': activeDropMenu }"
       @mouseleave="activeDropMenu = false"
@@ -77,6 +79,7 @@ defineExpose({
   z-index: 1;
   color: var(--color-text-secondary);
   cursor: pointer;
+
 
   @media (hover: hover) {
     &:hover .drop-menu__list {
@@ -115,6 +118,10 @@ defineExpose({
     transition: all 0.3s;
     pointer-events: none;
     overflow: hidden;
+
+  @media (max-width: 768px) {
+    // gap: 20px;
+  }
 
     &--visible {
       display: flex;

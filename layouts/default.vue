@@ -12,6 +12,7 @@ const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const contactStore = useContactStore();
 const popUpStore = usePopUpStore();
+
 const dropMenuData = ref<LinkDrop[]>([]);
 
 const isAboutPage = ref(false);
@@ -19,7 +20,6 @@ const isContactPage = ref(false);
 const isCategories = ref(false);
 const isScrollY = ref(false);
 const isMenuOpen = ref(false);
-const isPopUpOpen = ref(false);
 
 const mobileMenuRef = ref();
 const burgerBtnRef = ref();
@@ -53,9 +53,10 @@ const handleTouchPage = (e: TouchEvent) => {
   ) {
     isMenuOpen.value = false;
     noScrollTimeout = setTimeout(() => {
-      document.documentElement.classList.remove("no-scroll");
-      scrollSmoother?.paused(false);
       noScrollTimeout = null;
+      if (!popUpStore.popUpIsOpen) {
+        toggleBlockScroll(false);
+      }
     }, 200);
   }
 };
@@ -65,27 +66,26 @@ const handleFocusAbout = () => {
 const handleClosePopUp = (e: Event) => {
   const target = e.target as HTMLElement;
   if (!target) return;
-  if (target.closest(".pop-up__img")) {
-  }
+  // if (target.closest(".pop-up__img")) {
+  // }
   popUpStore.setPopUp(false);
 };
 const handleClickBurgerIcon = () => {
   isMenuOpen.value = !isMenuOpen.value;
-  if (isMenuOpen.value) {
-    scrollSmoother?.paused(true); // приостанавливаем прокрутку
-
-    document.documentElement.classList.add("no-scroll");
-  } else {
-    scrollSmoother?.paused(false); // возобновляем прокрутку
-
-    document.documentElement.classList.remove("no-scroll");
-  }
+  toggleBlockScroll(isMenuOpen.value);
 };
+
+const toggleBlockScroll = (value: boolean) => {
+  scrollSmoother?.paused(value);
+  document.documentElement.classList.toggle("no-scroll", value);
+};
+
+const initLinks = (data: string) => {};
 
 watch(
   () => route.path,
-  async (newPath) => {
-    await nextTick();
+  (newPath) => {
+    // await nextTick();
     isAboutPage.value = newPath === "/about";
     isContactPage.value = newPath === "/contact";
     isCategories.value = route.path.startsWith("/categories");
@@ -93,30 +93,15 @@ watch(
   { immediate: true }
 );
 watch(
-  () => popUpStore.popUp,
-  (popUp) => {
-    if (popUp) {
-      isPopUpOpen.value = true;
-      scrollSmoother?.paused(true);
-      document.documentElement.classList.add("no-scroll");
-    } else {
-      isPopUpOpen.value = false;
-      scrollSmoother?.paused(false);
-      document.documentElement.classList.remove("no-scroll");
-    }
+  () => popUpStore.popUpIsOpen,
+  (isOpen) => {
+    toggleBlockScroll(isOpen);
   }
 );
 
 onMounted(async () => {
   if (categoriesStore.categories.length === 0) {
     await categoriesStore.fetchCategories();
-    categoriesStore.categories.forEach((data) => {
-      const linkDropMenu = {
-        link: `/categories/${CATEGORY_SLUG_MAP[data.title]}`,
-        title: data.title,
-      };
-      dropMenuData.value.push(linkDropMenu);
-    });
   }
   if (!contactStore.contact) {
     await contactStore.fetchContact();
@@ -148,32 +133,14 @@ onUnmounted(() => {
 
 <template>
   <div class="layout-root">
-    <svg style="display: none">
-      <defs>
-        <filter
-          id="filter-home"
-          color-interpolation-filters="linearRGB"
-          filterUnits="objectBoundingBox"
-          primitiveUnits="userSpaceOnUse"
-        >
-          <feColorMatrix
-            type="saturate"
-            values="0"
-            in="SourceGraphic"
-            result="colormatrix"
-          />
-        </filter>
-      </defs>
-    </svg>
-
     <div
       class="pop-up"
-      :class="{ 'pop-up--visible': isPopUpOpen }"
+      :class="{ 'pop-up--visible': popUpStore.popUpIsOpen }"
       @click="handleClosePopUp"
     >
       <div class="pop-up__container-img">
         <NuxtImg
-          v-if="isPopUpOpen"
+          v-if="popUpStore.popUpIsOpen"
           draggable="false"
           :src="popUpStore.img?.url"
           :width="popUpStore.img?.width"
@@ -229,7 +196,7 @@ onUnmounted(() => {
                       starts-link="/categories"
                       color-bg="var(--drop-menu)"
                       title-class="link-menu"
-                      :links-data="dropMenuData"
+                      :links-data="categoriesStore.getLinksCategory('/categories/')"
                     />
                   </li>
                   <li class="list-menu__item">
@@ -254,7 +221,6 @@ onUnmounted(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label=" ссылка на телеграм Кирилла Земзюлина"
-
                   >
                     <Icon
                       class="social-icon"
@@ -269,7 +235,6 @@ onUnmounted(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label=" ссылка на профиль вк Кирилла Земзюлина"
-
                   >
                     <Icon
                       class="social-icon"
@@ -298,19 +263,18 @@ onUnmounted(() => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label=" ссылка на профиль инстаграм Кирилла Земзюлина"
-
                   >
                     <Icon
                       class="social-icon"
                       name="simple-icons:instagram"
                       size="28"
-
                     />
                   </a>
                 </li>
               </ul>
             </div>
             <button
+              :aria-label="isMenuOpen ? 'закрыть меню' : 'открыть меню'"
               ref="burgerBtnRef"
               class="header__burger burger"
               @click="handleClickBurgerIcon"
@@ -422,6 +386,11 @@ onUnmounted(() => {
   animation: move-decor 4s linear infinite alternate;
   animation-play-state: paused;
 
+  @media (max-width: 768px) {
+    width: 60vmax;
+    height: 60vmax;
+  }
+
   &::before {
     position: absolute;
     content: "";
@@ -454,8 +423,10 @@ onUnmounted(() => {
     filter: brightness(1) saturate(0);
 
     animation: move-decor 4s linear infinite alternate,
-      about 0.5s linear forwards, about-mask 1s 0.7s forwards;
+      about 0.3s ease-in forwards, about-mask 0.6s ease-out 0.5s forwards;
     animation-play-state: paused, running, running;
+    animation: name duration timing-function delay iteration-count direction
+      fill-mode;
   }
 
   &--contact {

@@ -32,7 +32,7 @@
       opacity: 0;
       transform-origin: center;
       transform: rotate(-90deg);
-      animation: stars-top 2s 1s forwards;
+      animation: stars-top 1s 0.5s forwards;
       pointer-events: none;
     }
   }
@@ -113,12 +113,14 @@
 @keyframes stars-top {
   0% {
     opacity: 0;
-    filter: blur(10px);
+    transform:rotate(-90deg) scale(0.2);
+    // filter: blur(10px);
   }
 
   100% {
     opacity: 1;
-    filter: blur(0);
+    transform: rotate(-90deg) scale(1);
+    // filter: blur(0);
 
   }
 }

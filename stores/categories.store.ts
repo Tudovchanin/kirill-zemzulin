@@ -1,7 +1,11 @@
-import type { Category, ImagesByCategory, Slug } from '~/types'
+import type { Category, CategoryName, ImagesByCategory, Slug } from '~/types'
 import { CATEGORIES_WITH_IMAGES_QUERY } from '~/queries/sanity.queries';
 import { CATEGORY_SLUG_MAP } from "~/constants/mappings.constants";
 
+type LinksCategory = {
+  link: string;
+  title: CategoryName;
+}
 
 export const useCategoriesStore = defineStore('categories', () => {
 
@@ -39,10 +43,21 @@ export const useCategoriesStore = defineStore('categories', () => {
     return data;
   })
 
-  
+  const getLinksCategory = (basePath:string)=>{
+    const linksCategory: LinksCategory[] = []
+    categories.value.forEach((data) => {
+      const linkDropMenu = {
+        link: `${basePath}${CATEGORY_SLUG_MAP[data.title]}`,
+        title: data.title,
+      };
+      linksCategory.push(linkDropMenu);
+    });
+
+    return linksCategory;
+  }
 
   return {
-    categories, loading, error, fetchCategories, imagesByCategory
+    categories, loading, error, fetchCategories, imagesByCategory, getLinksCategory
   }
 
 })

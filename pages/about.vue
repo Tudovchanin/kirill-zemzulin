@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { NuxtLink } from '#components';
-import { ABOUT_SEO } from '~/constants/seo.constants';
+import { NuxtLink } from "#components";
+import { ABOUT_SEO } from "~/constants/seo.constants";
 
 const baseUrl = useBaseUrl();
-
-
-
+const absoluteImageUrl = baseUrl + ABOUT_SEO.imageUrl;
 useSeoMeta({
   title: ABOUT_SEO.title,
   description: ABOUT_SEO.description,
   ogTitle: ABOUT_SEO.title,
   ogDescription: ABOUT_SEO.description,
-  ogImage: ABOUT_SEO.imageUrl,
-  ogType: ABOUT_SEO.ogType || 'website',
-  twitterCard: ABOUT_SEO.twitterCard || 'summary_large_image',
-})
+  ogImage: absoluteImageUrl,
+  ogType: ABOUT_SEO.ogType || "website",
+  twitterCard: ABOUT_SEO.twitterCard || "summary_large_image",
+});
 
 useHead({
-  link: [
-    { rel: 'canonical', href: `${baseUrl}/about` }
-  ]
-})
+  link: [{ rel: "canonical", href: `${baseUrl}/about` }],
+});
 
 const categoriesStore = useCategoriesStore();
 
@@ -36,6 +32,7 @@ const initSplitTextAnimation = (
 ) => {
   const split = new useSplitText(selectorAnimate, {
     type: "chars, words",
+    aria: "hidden",
   });
 
   useGsap.set(split[type], { [direction]: -100, autoAlpha: 0 });
@@ -66,12 +63,12 @@ const initCardsAnimation = (cards: NodeListOf<Element>): gsap.core.Tween[] => {
       {
         x: direction === "left" ? -1000 : 1000,
         rotate: 100,
-        autoAlpha: 0,
+        opacity: 0,
       },
       {
         x: 0,
         rotate: 0,
-        autoAlpha: 1,
+        opacity: 1,
 
         scrollTrigger: {
           trigger: card,
@@ -92,21 +89,24 @@ watch(
   () => categoriesStore.categories.length,
   async () => {
     await nextTick();
-    const cardsPackage = document.querySelectorAll('.package-card');
-    animateCards = initCardsAnimation(cardsPackage)
+    const cardsPackage = document.querySelectorAll(".package-card");
+    animateCards = initCardsAnimation(cardsPackage);
   }
 );
 
 onMounted(async () => {
+  if (document.fonts && document.fonts.ready) {
+    await document.fonts.ready;
+  }
   animatePricingTitle = initSplitTextAnimation(
     "y",
-    ".pricing__title",
+    ".pricing-title-animate",
     "chars",
     ".pricing__grid"
   );
   animatePricingText = initSplitTextAnimation(
     "x",
-    ".pricing__description",
+    ".pricing-description-animate",
     "words",
     ".pricing__grid"
   );
@@ -121,10 +121,10 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  if(animatePricingTitle) {
+  if (animatePricingTitle) {
     animatePricingTitle?.kill();
   }
-  if(animatePricingTitle) {
+  if (animatePricingTitle) {
     animatePricingText?.kill();
   }
 
@@ -158,14 +158,23 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <section class="pricing" aria-labelledby="pricing-heading">
+    <section class="pricing">
       <div class="pricing__header">
-        <h2 id="pricing-heading" class="pricing__title">Пакеты фотосессий</h2>
-        <p class="pricing__description">
+        <h2 class="sr-only">Пакеты фотосессий</h2>
+        <p class="sr-only">
           Выберите подходящий пакет фотосессии, который идеально соответствует
           вашим потребностям. Каждый из них гарантирует высокое качество съёмки
           и обработки, а также индивидуальный подход.
         </p>
+
+        <div class="pricing__title pricing-title-animate">
+          Пакеты фотосессий
+        </div>
+        <div class="pricing__description pricing-description-animate">
+          Выберите подходящий пакет фотосессии, который идеально соответствует
+          вашим потребностям. Каждый из них гарантирует высокое качество съёмки
+          и обработки, а также индивидуальный подход.
+        </div>
       </div>
 
       <div v-if="categoriesStore.categories.length" class="pricing__grid">
@@ -177,14 +186,11 @@ onBeforeUnmount(() => {
             <article
               v-for="packagePhoto in category.packages"
               :key="packagePhoto._id"
+              tabindex="0"
               class="pricing__card package-card"
-              :aria-labelledby="`package-heading-${packagePhoto._id}`"
             >
               <header class="package-card__header">
-                <h3
-                  :id="`package-heading-${packagePhoto._id}`"
-                  class="package-card__title"
-                >
+                <h3 class="package-card__title">
                   {{ packagePhoto.title }}
                 </h3>
                 <p class="package-card__price">{{ packagePhoto.price }}</p>
@@ -201,7 +207,8 @@ onBeforeUnmount(() => {
               </div>
               <footer class="package-card__footer">
                 <NuxtLink to="/contact" class="package-card__link base-btn"
-                  >Забронировать</NuxtLink>
+                  >Забронировать</NuxtLink
+                >
               </footer>
             </article>
           </template>
@@ -285,45 +292,55 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped>
-
 .about {
   display: flex;
   flex-direction: column;
   gap: 200px;
 
-  @media (max-width: 120px) {
-    gap: 150px;
+  &::before {
+    position: absolute;
+    content: "";
+    top: -350px;
+    right: 55vw;
+    z-index: -1;
+    width: 500px;
+    height: 150%;
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.053) 0%,
+      rgba(200, 200, 200, 0.1) 15%,
+      rgba(234, 192, 101, 0.404) 50%,
+      rgba(178, 151, 92, 0.404) 100%
+    );
+    opacity: 0;
+    filter: blur(25px);
+    transform-origin: center center;
+    transform: rotate(25deg);
+    animation: light-beam 1.5s linear 1s forwards;
+
+    @media (max-width: 1200px) {
+      right: 60vw;
+      width: 200px;
+    }
+
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 
   @media (max-width: 768px) {
-    gap: 120px;
+    gap: 100px;
   }
 
   &__hero {
     position: relative;
     max-width: 700px;
-    min-height:  600px;
+    min-height: 600px;
+    height: calc(100vh - 200px);
     opacity: 0;
-    animation: animate-hero 1s 1.2s forwards;
-
-    &::before {
-      position: absolute;
-      content: "";
-      top: -100px;
-      left: -100px;
-      z-index: -1;
-      width: 100%;
-      height: 50%;
-      background-color: rgba(104, 104, 104);
-      filter: blur(60px);
-
-      @media (max-width: 768px) {
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 80%;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
+    animation: animate-hero 0.5s 0.5s forwards;
+    @media (max-width: 768px) {
+      height: auto;
     }
   }
 
@@ -340,40 +357,71 @@ onBeforeUnmount(() => {
     gap: var(--gap-text);
     color: var(--color-text-primary);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-  }
+    font-size: 16px;
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
+   }
+}
+@keyframes fire {
+  0%      { background-position:    0px    0px; }
+  2.08%   { background-position: -100px    0px; }
+  4.17%   { background-position: -200px    0px; }
+  6.25%   { background-position: -300px    0px; }
+  8.33%   { background-position: -400px    0px; }
+  10.42%  { background-position: -500px    0px; }
+  12.5%   { background-position: -600px    0px; }
+  14.58%  { background-position: -700px    0px; }
+
+  16.67%  { background-position:    0px -100px; }
+  18.75%  { background-position: -100px -100px; }
+  20.83%  { background-position: -200px -100px; }
+  22.92%  { background-position: -300px -100px; }
+  25%     { background-position: -400px -100px; }
+  27.08%  { background-position: -500px -100px; }
+  29.17%  { background-position: -600px -100px; }
+  31.25%  { background-position: -700px -100px; }
+
+  33.33%  { background-position:    0px -200px; }
+  35.42%  { background-position: -100px -200px; }
+  37.5%   { background-position: -200px -200px; }
+  39.58%  { background-position: -300px -200px; }
+  41.67%  { background-position: -400px -200px; }
+  43.75%  { background-position: -500px -200px; }
+  45.83%  { background-position: -600px -200px; }
+  47.92%  { background-position: -700px -200px; }
+
+  50%     { background-position:    0px -300px; }
+  52.08%  { background-position: -100px -300px; }
+  54.17%  { background-position: -200px -300px; }
+  56.25%  { background-position: -300px -300px; }
+  58.33%  { background-position: -400px -300px; }
+  60.42%  { background-position: -500px -300px; }
+  62.5%   { background-position: -600px -300px; }
+  64.58%  { background-position: -700px -300px; }
+
+  66.67%  { background-position:    0px -400px; }
+  68.75%  { background-position: -100px -400px; }
+  70.83%  { background-position: -200px -400px; }
+  72.92%  { background-position: -300px -400px; }
+  75%     { background-position: -400px -400px; }
+  77.08%  { background-position: -500px -400px; }
+  79.17%  { background-position: -600px -400px; }
+  81.25%  { background-position: -700px -400px; }
+
+  83.33%  { background-position:    0px -500px; }
+  85.42%  { background-position: -100px -500px; }
+  87.5%   { background-position: -200px -500px; }
+  89.58%  { background-position: -300px -500px; }
+  91.67%  { background-position: -400px -500px; }
+  93.75%  { background-position: -500px -500px; }
+  95.83%  { background-position: -600px -500px; }
+  97.92%  { background-position: -700px -500px; }
+  100%    { background-position:    0px    0px; } /* для плавного зацикливания */
 }
 
 .pricing {
   position: relative;
-
-  &::before {
-    position: absolute;
-    content: "";
-    top: -400px;
-    left: -1200px;
-    z-index: -1;
-    width: 4000px;
-    height: 50%;
-    background: linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.053) 0%,
-      rgba(200, 200, 200, 0.1) 50%,
-
-      rgba(234, 192, 101, 0.566) 100%
-    );
-    opacity: 0;
-    filter: blur(25px);
-    transform: rotate(-50deg);
-    animation: light-beam 1.5s linear 1s forwards;
-
-    @media (max-width: 1200px) {
-      width: 3400px;
-    }
-
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
 
   &__header {
     display: flex;
@@ -382,6 +430,9 @@ onBeforeUnmount(() => {
     gap: var(--gap-heading-section);
     padding-bottom: var(--gap-card-outer);
     text-align: center;
+    @media (max-width: 768px) {
+      margin-bottom: 70px;
+    }
   }
 
   &__title {
@@ -419,8 +470,30 @@ onBeforeUnmount(() => {
   }
 
   &__card {
-    outline: var(--color-accent-primary) solid 1px;
-    visibility: hidden;
+    position: relative;
+    overflow: hidden;
+    opacity: 0; 
+    &:focus {
+      opacity: 1;
+      transform: none;
+      outline: var(--color-accent-primary) solid 1px;
+    }
+
+  &::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    background-image: url('/assets/images/fire-min.png');
+    background-position:left top;
+    background-size: 800px 600px;
+    background-position: 0 0;
+    width: 100px;
+    height: 100px;
+    // border: solid red;
+    animation: fire 3s steps(1) infinite alternate;
+
+  }
   }
 
   &__footer {
@@ -469,7 +542,6 @@ onBeforeUnmount(() => {
   line-height: 1.3;
 }
 
-
 .skeleton-loader {
   width: 200px;
 }
@@ -495,5 +567,4 @@ onBeforeUnmount(() => {
     opacity: 1;
   }
 }
-
 </style>

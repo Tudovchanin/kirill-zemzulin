@@ -4,9 +4,14 @@ export type CategoryName = 'Портреты' | 'Свадебные' | 'Пейз
 export type Slug = 'portraits' | 'weddings' | 'landscapes'
 
 
+export type TitleImageUrl = string
+
+
+
 export type Image = {
   _id: string
   url: string
+  mobileUrl?:string
   title?: string
   description?: string
   width?: number
@@ -29,7 +34,8 @@ export type Category = {
   _id: string
   title: CategoryName
   description?: string
-  titleImageUrl:string
+  titleImageUrl:TitleImageUrl
+  mobileTitleImageUrl?: TitleImageUrl
   images: Image[],
   packages: Package[],
 }
@@ -53,7 +59,6 @@ export type SeoMeta = {
   description: string
   imageUrl: string
   ogType?: 'website' | 'article' | 'book' | 'profile' | 'music.song' | 'music.album' | 'music.playlist' | 'music.radio_status' | 'video.movie' | 'video.episode' | 'video.tv_show' | 'video.other'
-
   twitterCard?: 'summary_large_image' | 'summary' | 'app' | 'player'
 }
 

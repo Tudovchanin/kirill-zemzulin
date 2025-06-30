@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import { CONTACT_SEO } from "~/constants/seo.constants";
+import { SLUG_CATEGORY_MAP } from "~/constants/mappings.constants";
+
+type MailData = {
+  from: string;
+  replyTo: string;
+  subject: string;
+  text: string;
+};
+
 const mail = useMail();
 const baseUrl = useBaseUrl();
+const absoluteImageUrl = baseUrl + CONTACT_SEO.imageUrl;
+
 
 useSeoMeta({
   title: CONTACT_SEO.title,
   description: CONTACT_SEO.description,
   ogTitle: CONTACT_SEO.title,
   ogDescription: CONTACT_SEO.description,
-  ogImage: CONTACT_SEO.imageUrl,
+  ogImage: absoluteImageUrl,
   ogType: CONTACT_SEO.ogType || "website",
   twitterCard: CONTACT_SEO.twitterCard || "summary_large_image",
 });
@@ -28,11 +39,34 @@ const form = reactive({
   message: "",
   captchaAnswer: "",
 });
+
+const getMailData = computed(() => {
+  return {
+    from: '"Кирилл Земзюлин — портфолио" <sotto36623@yandex.ru>',
+    replyTo: `${form.name} <${form.email}>`,
+    subject: `Заявка на фотосессию: ${form.category}`,
+    text: `Имя: ${form.name}
+Email: ${form.email}
+Категория: ${form.category}
+Дата съёмки: ${form.shooting_date || "не указана"}
+Сообщение: ${form.message || "нет"}`,
+  };
+});
+
 const captchaQuestion = "Сколько будет 3 + 4?";
 const correctCaptcha = "7";
 const errorMessage = ref("");
 const successMessage = ref("");
 
+const validateForm = (): { valid: boolean; error: string } => {
+  if (!form.name || !form.email || !form.category) {
+    return { valid: false, error: "Пожалуйста, заполните обязательные поля" };
+  }
+  if (form.captchaAnswer.trim() !== correctCaptcha) {
+    return { valid: false, error: "Неверный ответ на капчу" };
+  }
+  return { valid: true, error: "" };
+};
 const resetForm = () => {
   form.name = "";
   form.email = "";
@@ -41,45 +75,55 @@ const resetForm = () => {
   form.message = "";
   form.captchaAnswer = "";
 };
-const sendForm = async () => {
+
+const resetMessage = () => {
   errorMessage.value = "";
   successMessage.value = "";
-  if (!form.name || !form.email || !form.category) {
-    errorMessage.value = "Пожалуйста, заполните обязательные поля";
-    return;
-  }
-  // Проверка капчи
-  if (form.captchaAnswer.trim() !== correctCaptcha) {
-    errorMessage.value = "Неверный ответ на капчу";
-    return;
-  }
-
+};
+const sendMessage = async (
+  mailData: MailData
+): Promise<{ success: boolean; error?: string }> => {
   try {
-    sendOn.value = true;
-    await mail.send({
-      from: '"Кирилл Земзюлин — портфолио" <sotto36623@yandex.ru>',
-      replyTo: `${form.name} <${form.email}>`,
-      subject: `Заявка на фотосессию: ${form.category}`,
-      text: `Имя: ${form.name} Email: ${form.email} Категория: ${
-        form.category
-      } Дата съёмки: ${form.shooting_date || "не указана"}
-Сообщение: ${form.message || "нет"}`,
-    });
-    successMessage.value = "Спасибо! Ваша заявка отправлена.";
-    resetForm();
+    await mail.send(mailData);
+    return { success: true };
   } catch (e: any) {
-    errorMessage.value = e.message || "Ошибка сети";
-  } finally {
-    sendOn.value = false;
+    let errorMsg = "Ошибка сети";
+    if (typeof e === "string") {
+      errorMsg = e;
+    } else if (e && typeof e.message === "string") {
+      errorMsg = e.message;
+    }
+    return { success: false, error: errorMsg };
   }
 };
+
+const handleSubmit = async () => {
+  resetMessage();
+
+  const resultValidate = validateForm();
+  if (!resultValidate.valid) {
+    errorMessage.value = resultValidate.error;
+    return;
+  }
+  sendOn.value = true;
+  const resultSend = await sendMessage(getMailData.value);
+  sendOn.value = false;
+  if (resultSend.success) {
+    successMessage.value = "Спасибо! Ваша заявка отправлена.";
+    resetForm();
+  } else {
+    errorMessage.value = resultSend.error || "неизвестная ошибка";
+  }
+};
+
 const handleCloseMessage = () => {
   errorMessage.value = "";
   successMessage.value = "";
 };
-
 const handleShowForm = () => {
   formMobileHidden.value = !formMobileHidden.value;
+  resetForm();
+  resetMessage();
 };
 </script>
 <template>
@@ -88,27 +132,21 @@ const handleShowForm = () => {
     @click="handleCloseMessage"
   >
     <h1 class="contact__title">Оставить заявку на фотосессию</h1>
-    <!-- <button
-      @click="sendOn = true"
-      style="padding: 10px; cursor: pointer; position: relative; z-index: 2"
-    >
-      отправить сообщение
-    </button>
-    <button
-      @click="sendOn = false"
-      style="padding: 10px; cursor: pointer; position: relative; z-index: 2"
-    >
-      завершить отправку
-    </button> -->
+
     <form
       class="contact__form form"
       :class="{
         'contact__form--off': sendOn || errorMessage || successMessage,
         'contact__form--hidden': formMobileHidden,
       }"
-      @submit.prevent="sendForm"
+      @submit.prevent="handleSubmit"
     >
-    <button aria-label="закрыть форму" class="contact__form-close" @click="formMobileHidden = true">
+      <button
+        type="button"
+        aria-label="закрыть форму"
+        class="contact__form-close"
+        @click="formMobileHidden = true"
+      >
         <Icon :name="'lucide-x'" size="32" />
       </button>
       <div class="form__field">
@@ -132,7 +170,6 @@ const handleShowForm = () => {
           name="email"
           required
           placeholder="example@mail.com"
-          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
           title="Введите корректный email, например: user@example.com"
           class="form__input"
         />
@@ -151,9 +188,9 @@ const handleShowForm = () => {
           <option value="" disabled selected class="form__select--placeholder">
             Выберите категорию
           </option>
-          <option value="portrait">Портрет</option>
-          <option value="minimalism">Минимализм</option>
-          <option value="landscape">Пейзаж</option>
+          <option v-for="(category, slug) in SLUG_CATEGORY_MAP" :value="slug">
+            {{ category }}
+          </option>
         </select>
       </div>
       <div class="form__field">
@@ -181,7 +218,7 @@ const handleShowForm = () => {
           class="form__text-area"
         ></textarea>
       </div>
-      <!-- Капча -->
+
       <div class="form__field">
         <label for="captcha" class="form__label"
           >Капча: {{ captchaQuestion }}<span>*</span>:</label
@@ -279,15 +316,19 @@ const handleShowForm = () => {
     >
       <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
       <p v-if="successMessage" style="color: white">{{ successMessage }}</p>
-      <button aria-label="закрыть сообщение"  class="message__close" @click="handleCloseMessage">
-        <Icon :name="'lucide-x'" size="32"/>
+      <button
+        aria-label="закрыть сообщение"
+        class="message__close"
+        @click="handleCloseMessage"
+      >
+        <Icon :name="'lucide-x'" size="32" />
       </button>
     </div>
 
     <button
       v-if="formMobileHidden"
       @click="handleShowForm"
-      class="contact__btn-show-form base-btn"
+      class="contact__show-form base-btn"
     >
       Открыть форму
     </button>
@@ -298,37 +339,6 @@ const handleShowForm = () => {
 .contact {
   position: relative;
   min-height: 100vh;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   &__loader {
     position: absolute;
@@ -357,8 +367,6 @@ const handleShowForm = () => {
     font-size: var(--adaptive-font-24-30);
     font-weight: 600;
     color: var(--color-text-primary);
-
-
     text-shadow: -1px -1px 2px black;
     animation: right-transform 1s;
   }
@@ -366,16 +374,16 @@ const handleShowForm = () => {
   &__form {
     position: relative;
     z-index: 2;
-    animation: left-transform 1s;
+    animation: left-transform 0.5s;
 
     @media (max-width: 768px) {
       transform: translateX(-100vw);
-      animation: left-transform 1s 1s forwards;
+      animation: left-transform 0.5s forwards;
     }
 
     &--hidden {
       @media (max-width: 768px) {
-        visibility: hidden;
+        display: none;
       }
     }
 
@@ -386,22 +394,22 @@ const handleShowForm = () => {
 
   &__form-close {
     display: none;
-    @media (max-width: 768px){
+
+    @media (max-width: 768px) {
       position: absolute;
       top: 0;
-    right: 0;
-    padding-top: 5px;
-    padding-right: 5px;
-    display: block;
-    color: white;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+      right: 0;
+      padding-top: 5px;
+      padding-right: 5px;
+      display: block;
+      color: white;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
     }
-   
   }
 
-  &__btn-show-form {
+  &__show-form {
     display: none;
 
     @media (max-width: 768px) {
@@ -409,6 +417,7 @@ const handleShowForm = () => {
       top: 200px;
       left: 50%;
       display: block;
+      width: max-content;
       transform: translateX(-50%);
     }
 

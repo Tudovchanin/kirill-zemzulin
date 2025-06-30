@@ -5,10 +5,15 @@ export const CATEGORIES_WITH_IMAGES_QUERY = groq`
     _id,
     title,
     description,
+
+    
     "titleImageUrl": titleImage.asset->url,
+    "mobileTitleImageUrl" : mobileTitleImage.asset->url,
+
     "images": *[_type == "photo" && references(^._id)]{
       _id,
       "url": image.asset->url,
+      "mobileUrl" : mobileImage.asset->url,
       title,
       description,
       "width": image.asset->metadata.dimensions.width,
