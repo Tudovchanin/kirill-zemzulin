@@ -3,8 +3,9 @@ import Typed from "typed.js";
 import { CATEGORY_SLUG_MAP } from "~/constants/mappings.constants";
 import { PLUG } from "~/constants/app.constants";
 import { HOME_SEO } from "~/constants/seo.constants";
+import { useDevice } from "~/composables/useDevice";
 
-type Device = "desc" | "mobile";
+
 
 type AnimationController = {
   removeAnimate: () => void;
@@ -27,6 +28,9 @@ useHead({
   link: [{ rel: "canonical", href: baseUrl }],
 });
 
+const {device, imageSizes} = useDevice();
+
+
 const categoriesStore = useCategoriesStore();
 const hoverStore = useHoverStore();
 
@@ -34,27 +38,12 @@ const activePhotoCategory = ref(false);
 
 const aboutHomeRef = ref();
 
-const device = ref<Device>("desc");
-
-const imageSizes = computed(() => {
-  switch (device.value) {
-    case "mobile":
-      return { width: 450, height: 640 };
-    case "desc":
-      return { width: 550, height: 800 };
-    default:
-      return { width: 550, height: 800 };
-  }
-});
-
 let mobileWidthMediaQuery: MediaQueryList | null = null;
 
 let animateCardCategoriesScroll: ScrollTrigger | null = null;
 let animateHomeAboutTyped: ScrollTrigger | null = null;
 let typedInstance: null | Typed = null;
-
 let animateLinkInMobile: null | AnimationController = null;
-
 let animateHomeAboutAppearance: gsap.core.Tween | null = null;
 
 watch(
@@ -163,10 +152,10 @@ const initAnimateMobileLink = () => {
 const handleMediaQueryMobile = (e: MediaQueryListEvent) => {
   if (e.matches) {
     animateLinkInMobile = initAnimateMobileLink();
-    device.value = "mobile";
+    // device.value = "mobile";
   } else {
     animateLinkInMobile?.removeAnimate();
-    device.value = "desc";
+    // device.value = "desc";
   }
 };
 const handleOutCategory = () => {
@@ -182,7 +171,6 @@ const loadImg = ref<boolean[]>(categoriesStore.categories.map(() => false));
 const handleLoadImg = (index: number) => {
   loadImg.value[index] = true;
 };
-
 
 onMounted(() => {
   mobileWidthMediaQuery = window.matchMedia("(max-width: 768px)");
@@ -354,92 +342,6 @@ onUnmounted(() => {
           </div>
         </li>
       </ul>
-
-      <!-- <template v-else>
-        <ul class="categories page-padding-y">
-          <li
-            v-for="category in CATEGORY_SLUG_MAP"
-            :key="category"
-            class="categories__container-img"
-          >
-            <div class="categories__loader">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                <rect
-                  fill="#000000"
-                  stroke="#000000"
-                  stroke-width="11"
-                  width="30"
-                  height="30"
-                  x="25"
-                  y="85"
-                >
-                  <animate
-                    attributeName="opacity"
-                    calcMode="spline"
-                    dur="2"
-                    values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="-.4"
-                  />
-                </rect>
-                <rect
-                  fill="#000000"
-                  stroke="#000000"
-                  stroke-width="11"
-                  width="30"
-                  height="30"
-                  x="85"
-                  y="85"
-                >
-                  <animate
-                    attributeName="opacity"
-                    calcMode="spline"
-                    dur="2"
-                    values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="-.2"
-                  />
-                </rect>
-                <rect
-                  fill="#000000"
-                  stroke="#000000"
-                  stroke-width="11"
-                  width="30"
-                  height="30"
-                  x="145"
-                  y="85"
-                >
-                  <animate
-                    attributeName="opacity"
-                    calcMode="spline"
-                    dur="2"
-                    values="1;0;1;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="0"
-                  />
-                </rect>
-              </svg>
-            </div>
-            <NuxtImg
-              v-if="device === 'desc'"
-              :src="PLUG"
-              width="550"
-              height="800"
-              alt="Загрузка изображения..."
-            />
-            <NuxtImg
-              v-else-if="device === 'mobile'"
-              :src="PLUG"
-              width="450"
-              height="640"
-              alt="Загрузка изображения..."
-            />
-          </li>
-        </ul>
-      </template> -->
     </section>
 
     <section ref="aboutHomeRef" class="about-home about-home--mb about-animate">
@@ -652,49 +554,3 @@ onUnmounted(() => {
   }
 }
 </style>
-<!--  <picture >
-              <source
-                v-if="category.mobileTitleImageUrl"
-                media="(max-width: 600px)"
-                :srcset="category.mobileTitleImageUrl"
-                type="image/avif"
-              />
-              <source
-                v-if="category.mobileTitleImageUrl"
-                media="(max-width: 600px)"
-                :srcset="category.mobileTitleImageUrl"
-                type="image/webp"
-              />
-              <source
-                v-if="category.mobileTitleImageUrl"
-                media="(max-width: 600px)"
-                :srcset="category.mobileTitleImageUrl"
-                type="image/jpeg"
-              />
-              <source
-                media="(min-width: 601px)"
-                :srcset="category.titleImageUrl"
-                type="image/avif"
-              />
-              <source
-                media="(min-width: 601px)"
-                :srcset="category.titleImageUrl"
-                type="image/webp"
-              />
-              <source
-                media="(min-width: 601px)"
-                :srcset="category.titleImageUrl"
-                type="image/jpeg"
-              />
-              <img
-                :src="category.titleImageUrl"
-                :alt="loadImg[index] ? 'обложка категорий фото' : ''"
-                draggable="false"
-                loading="lazy"
-                width="550"
-                height="800"
-                class="categories__img appear"
-                :class="{ [`appear--${index}`]: loadImg[index] }"
-                @load="handleLoadImg(index)"
-              />
-            </picture> -->

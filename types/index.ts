@@ -1,4 +1,5 @@
 
+export type Device = "desc" | "mobile";
 
 export type CategoryName = 'Портреты' | 'Свадебные' | 'Пейзажи'
 export type Slug = 'portraits' | 'weddings' | 'landscapes'

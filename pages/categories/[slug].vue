@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Slug, Image } from "~/types";
+import type { Slug, Image} from "~/types";
 import { SLUG_CATEGORY_MAP } from "~/constants/mappings.constants";
 import { CATEGORY_SEO } from "~/constants/seo.constants";
 
@@ -9,9 +9,12 @@ const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const popUpStore = usePopUpStore();
 
-const slug = ref<Slug | null>(null);
+const masonryRef = ref<HTMLElement | null>(null);
+const photoRef = ref<HTMLElement[] | []>([]);
 
-let countLoad = 0;
+const slug = ref<Slug | null>(null);
+const {device, imageSizes} = useDevice();
+
 
 const lengthImages = computed(() => {
   return (
@@ -41,9 +44,8 @@ watch(
   }
 );
 
-const masonryRef = ref<HTMLElement | null>(null);
-const photoRef = ref<HTMLElement[] | []>([]);
 
+let countLoad = 0;
 const handleLoadImage = () => {
   if (!slug.value || !lengthImages.value) return;
 
@@ -122,14 +124,20 @@ onUnmounted(() => {
             <NuxtImg
               ref="photoRef"
               draggable="false"
-              :src="img.url"
+              :src="
+                device === 'mobile'
+                  ? img.mobileUrl
+                    ? img.mobileUrl
+                    : img.url
+                  : img.url
+              "
               :width="img.width"
               :height="img.height"
-              sizes="md:700"
               class="masonry__img"
               :alt="img.title || 'картинка без описания'"
               @load="handleLoadImage"
               :loading="index >= 7 ? 'lazy' : 'eager'"
+              format="webp"
             />
           </li>
         </ul>
