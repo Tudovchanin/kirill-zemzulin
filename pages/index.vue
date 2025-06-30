@@ -5,8 +5,6 @@ import { PLUG } from "~/constants/app.constants";
 import { HOME_SEO } from "~/constants/seo.constants";
 import { useDevice } from "~/composables/useDevice";
 
-
-
 type AnimationController = {
   removeAnimate: () => void;
 };
@@ -23,20 +21,19 @@ useSeoMeta({
   ogType: HOME_SEO.ogType || "website",
   twitterCard: HOME_SEO.twitterCard || "summary_large_image",
 });
-
 useHead({
   link: [{ rel: "canonical", href: baseUrl }],
 });
 
+const categoriesStore = useCategoriesStore();
 const {device, imageSizes} = useDevice();
 
-
-const categoriesStore = useCategoriesStore();
-const hoverStore = useHoverStore();
-
-const activePhotoCategory = ref(false);
-
 const aboutHomeRef = ref();
+
+const loadImg = ref<boolean[]>(categoriesStore.categories.map(() => false));
+const handleLoadImg = (index: number) => {
+  loadImg.value[index] = true;
+};
 
 let mobileWidthMediaQuery: MediaQueryList | null = null;
 
@@ -152,24 +149,9 @@ const initAnimateMobileLink = () => {
 const handleMediaQueryMobile = (e: MediaQueryListEvent) => {
   if (e.matches) {
     animateLinkInMobile = initAnimateMobileLink();
-    // device.value = "mobile";
   } else {
     animateLinkInMobile?.removeAnimate();
-    // device.value = "desc";
   }
-};
-const handleOutCategory = () => {
-  activePhotoCategory.value = false;
-  hoverStore.setHoverCategory(false);
-};
-const handleInCategory = () => {
-  activePhotoCategory.value = true;
-  hoverStore.setHoverCategory(true);
-};
-
-const loadImg = ref<boolean[]>(categoriesStore.categories.map(() => false));
-const handleLoadImg = (index: number) => {
-  loadImg.value[index] = true;
 };
 
 onMounted(() => {
@@ -237,8 +219,6 @@ onUnmounted(() => {
             v-show="loadImg[index]"
             :to="`/categories/${CATEGORY_SLUG_MAP[category.title]}`"
             class="categories__link"
-            @mouseenter="handleInCategory"
-            @mouseleave="handleOutCategory"
           >
             <NuxtImg
               draggable="false"
@@ -364,7 +344,6 @@ onUnmounted(() => {
     </section>
   </div>
 </template>
-
 <style lang="scss" scoped>
 .categories {
   display: flex;
@@ -405,8 +384,6 @@ onUnmounted(() => {
         transform: scale(1.02);
       }
 
-      &:hover .categories__title {
-      }
     }
   }
 

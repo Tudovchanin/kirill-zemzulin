@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useScrollSmoother } from "#gsap";
-
 
 const nuxtApp = useNuxtApp()
 const scrollSmoother = nuxtApp.$scrollSmoother as ScrollSmoother | undefined
@@ -62,8 +60,6 @@ const handleFocusAbout = () => {
 const handleClosePopUp = (e: Event) => {
   const target = e.target as HTMLElement;
   if (!target) return;
-  // if (target.closest(".pop-up__img")) {
-  // }
   popUpStore.setPopUp(false);
 };
 const handleClickBurgerIcon = () => {
@@ -101,14 +97,6 @@ await useAsyncData('contacts', () => contactStore.fetchContact());
 
 
 onMounted(async () => {
-  // if (categoriesStore.categories.length === 0) {
-  //   await categoriesStore.fetchCategories();
-  // }
-  // if (!contactStore.contact) {
-  //   await contactStore.fetchContact();
-  // }
-
-
   window.addEventListener("scroll", handleScroll);
 });
 onUnmounted(() => {
