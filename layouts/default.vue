@@ -1,14 +1,12 @@
 <script setup lang="ts">
-
-const nuxtApp = useNuxtApp()
-const scrollSmoother = nuxtApp.$scrollSmoother as ScrollSmoother | undefined
+const nuxtApp = useNuxtApp();
+const scrollSmoother = nuxtApp.$scrollSmoother as ScrollSmoother | undefined;
 
 const route = useRoute();
 
 const categoriesStore = useCategoriesStore();
 const contactStore = useContactStore();
 const popUpStore = usePopUpStore();
-
 
 const isAboutPage = ref(false);
 const isContactPage = ref(false);
@@ -20,7 +18,6 @@ const mobileMenuRef = ref();
 const burgerBtnRef = ref();
 const itemDropRef = ref();
 const dropMenuComponentRef = ref();
-
 
 let scrollTimeout: ReturnType<typeof setTimeout>;
 let noScrollTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -72,15 +69,13 @@ const toggleBlockScroll = (value: boolean) => {
   document.documentElement.classList.toggle("no-scroll", value);
 };
 
-
 watch(
   () => route.path,
- async (newPath) => {
+  async (newPath) => {
     await nextTick();
     isAboutPage.value = newPath === "/about";
     isContactPage.value = newPath === "/contact";
     isCategories.value = route.path.startsWith("/categories");
-  
   },
   { immediate: true }
 );
@@ -91,10 +86,8 @@ watch(
   }
 );
 
-
-await useAsyncData('categories', () => categoriesStore.fetchCategories());
-await useAsyncData('contacts', () => contactStore.fetchContact());
-
+await useAsyncData("categories", () => categoriesStore.fetchCategories());
+await useAsyncData("contacts", () => contactStore.fetchContact());
 
 onMounted(async () => {
   window.addEventListener("scroll", handleScroll);
@@ -105,7 +98,6 @@ onUnmounted(() => {
     clearTimeout(noScrollTimeout);
     noScrollTimeout = null;
   }
-
 });
 </script>
 
@@ -123,9 +115,9 @@ onUnmounted(() => {
           :src="popUpStore.img?.url"
           :width="popUpStore.img?.width"
           :height="popUpStore.img?.height"
-          sizes="md:700"
           :alt="popUpStore.img?.description"
           class="pop-up__img"
+
         />
       </div>
       <button class="pop-up__close">
@@ -174,7 +166,9 @@ onUnmounted(() => {
                       starts-link="/categories"
                       color-bg="var(--drop-menu)"
                       title-class="link-menu"
-                      :links-data="categoriesStore.getLinksCategory('/categories/')"
+                      :links-data="
+                        categoriesStore.getLinksCategory('/categories/')
+                      "
                     />
                   </li>
                   <li class="list-menu__item">
@@ -235,9 +229,9 @@ onUnmounted(() => {
                     />
                   </a>
                 </li>
-                <li v-if="contactStore.mainSocialLinks.vk">
+                <li v-if="contactStore.mainSocialLinks.instagram">
                   <a
-                    :href="contactStore.mainSocialLinks.vk?.url"
+                    :href="contactStore.mainSocialLinks.instagram?.url"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label=" ссылка на профиль инстаграм Кирилла Земзюлина"
@@ -301,7 +295,7 @@ onUnmounted(() => {
   z-index: 1000;
   display: none;
   background-color: rgba(0, 0, 0, 0.493);
-  backdrop-filter: blur(10px);
+  animation: pop-up 1s forwards;
 
   &--visible {
     display: grid;
@@ -315,6 +309,10 @@ onUnmounted(() => {
     align-items: center;
     width: 70vw;
     height: 95vh;
+
+    @media (max-width: 768px) {
+      width: 95vw;
+    }
   }
 
   &__img {
@@ -401,7 +399,7 @@ onUnmounted(() => {
     filter: brightness(1) saturate(0);
 
     animation: move-decor 4s linear infinite alternate,
-      about 0.5s ease-in  forwards, about-mask 0.5s ease-out 0.5s forwards;
+      about 0.5s ease-in forwards, about-mask 0.5s ease-out 0.5s forwards;
     animation-play-state: paused, running, running;
     animation: name duration timing-function delay iteration-count direction
       fill-mode;
@@ -437,6 +435,15 @@ onUnmounted(() => {
 
 .header-animate {
   animation: header-init 0.5s linear;
+}
+
+@keyframes pop-up {
+  0%{
+    backdrop-filter: blur(0)  brightness(1);;
+  }
+  100% {
+    backdrop-filter: blur(10px)  brightness(0);;
+  }
 }
 
 @keyframes contact-decor {
