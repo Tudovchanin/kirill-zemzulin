@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Slug, Image} from "~/types";
+import type { Slug, Image } from "~/types";
 import { SLUG_CATEGORY_MAP } from "~/constants/mappings.constants";
 import { CATEGORY_SEO } from "~/constants/seo.constants";
 
@@ -13,20 +13,23 @@ const masonryRef = ref<HTMLElement | null>(null);
 const photoRef = ref<HTMLElement[] | []>([]);
 
 const slug = ref<Slug | null>(null);
-const {device, imageSizes} = useDevice();
-
+const { device } = useDevice();
 
 const lengthImages = computed(() => {
   return (
     (slug.value && categoriesStore.imagesByCategory[slug.value]?.length) || 0
   );
 });
+const loadImgState = ref<boolean[]>([]);
+
+
 
 watch(
   () => slug.value,
   (newSlug) => {
     if (newSlug) {
-      countLoad = 0;
+      loadImgState.value = Array(lengthImages.value).fill(false);
+      
       useSeoMeta({
         title: CATEGORY_SEO[newSlug].title,
         description: CATEGORY_SEO[newSlug].description,
@@ -44,44 +47,12 @@ watch(
   }
 );
 
-
-let countLoad = 0;
-const handleLoadImage = () => {
-  if (!slug.value || !lengthImages.value) return;
-
-  countLoad++;
-
-  const needToLoad = Math.min(lengthImages.value, 7);
-
-  if (countLoad === needToLoad) {
-    animateLoadPhoto = initAnimateLoadAnimation();
-  }
+const handleLoadImage = async (index:number) => {
+  await nextTick();
+  loadImgState.value[index] = true
 };
 
-let animateLoadPhoto: gsap.core.Tween | null = null;
 const masonryImagesRef = ref<HTMLElement[]>([]);
-
-const initAnimateLoadAnimation = () => {
-  const animate = useGsap.fromTo(
-    ".animate-photo",
-    {
-      opacity: 0,
-      x: (index) => (index % 2 === 0 ? 1500 : -1500),
-    },
-    {
-      opacity: 1,
-      x: 0,
-      duration: 0.6,
-      ease: "expo.out",
-      stagger: 0.05,
-      onComplete: () => {
-        useGsap.to(".photos-category__title", { opacity: 1 });
-      },
-    }
-  );
-
-  return animate;
-};
 
 const handleClickImg = (img: Image) => {
   popUpStore.setPopUp(true);
@@ -93,11 +64,7 @@ onMounted(async () => {
     slug.value = route.params.slug as Slug;
   }
 });
-onUnmounted(() => {
-  if (animateLoadPhoto) {
-    animateLoadPhoto?.kill();
-  }
-});
+
 </script>
 <template>
   <div
@@ -107,21 +74,23 @@ onUnmounted(() => {
     <h1 class="photos-category__title">
       {{ slug && SLUG_CATEGORY_MAP[slug] }}
     </h1>
+
     <section aria-labelledby="photos-category-title" class="masonry">
       <h2 id="photos-category-title" class="sr-only">
         Фотографии категории {{ slug && SLUG_CATEGORY_MAP[slug] }}
       </h2>
       <template v-if="categoriesStore.imagesByCategory && slug">
-        <ul>
+        <ul class="masonry__list">
           <li
             v-for="(img, index) in categoriesStore.imagesByCategory[slug!]"
             :key="img._id"
             ref="masonryImagesRef"
             class="masonry__item"
-            :class="{ 'animate-photo': index < 7 }"
+            :class="{'masonry__item--visible': loadImgState[index]}"
             @click.stop="handleClickImg(img)"
           >
             <NuxtImg
+         
               ref="photoRef"
               draggable="false"
               :src="
@@ -135,8 +104,8 @@ onUnmounted(() => {
               :height="img.height"
               class="masonry__img"
               :alt="img.title || 'картинка без описания'"
-              @load="handleLoadImage"
-              :loading="index >= 7 ? 'lazy' : 'eager'"
+              @load="handleLoadImage(index)"
+              :loading="index > 7 ? 'lazy': 'eager'"
               format="webp"
             />
           </li>
@@ -221,6 +190,7 @@ onUnmounted(() => {
     font-size: var(--adaptive-font-24-30);
     color: var(--color-text-primary);
     opacity: 0;
+    animation: from-right 1s 0.5s  forwards;
   }
 }
 
@@ -229,16 +199,27 @@ onUnmounted(() => {
   min-height: 10000px;
   animation: photo-masonry 0.5s linear forwards;
 
+
   &__item {
+    margin-bottom: 12px;
     text-align: center;
     cursor: pointer;
+    opacity: 0;
   }
 
-  &__item:not(:last-child) {
-    display: block;
-    width: 100%;
-    margin-bottom: 12px;
+  &__item--visible:nth-child(4n + 1) {
+    animation: from-right 1s 0.5s  forwards;
   }
+  &__item--visible:nth-child(4n + 2) {
+    animation: from-left 1s 0.5s  forwards;
+  }
+  &__item--visible:nth-child(4n + 3) {
+    animation: from-up 1s 0.5s  forwards;
+  }
+  &__item--visible:nth-child(4n) {
+    animation: from-bottom 1s 0.5s  forwards;
+  }
+
 
   &__img {
     box-shadow: 0 0 4px 8px var(--color-primary);
@@ -264,9 +245,51 @@ onUnmounted(() => {
   }
 }
 
-.animate-photo {
-  opacity: 0;
+@keyframes from-right {
+  0% {
+    transform: translateX(1500px);
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
+
+@keyframes from-left {
+  0% {
+    transform: translateX(-1500px);
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes from-bottom {
+  0% {
+    transform: translateY(1500px);
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes from-up {
+  0% {
+    transform: translateY(-1500px);
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 
 @keyframes photo-masonry {
   0% {
