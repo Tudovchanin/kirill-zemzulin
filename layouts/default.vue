@@ -1,4 +1,48 @@
 <script setup lang="ts">
+
+useHead({
+  link: [
+    {
+      rel: 'preload',
+      as: 'image',
+      href: '/assets/images/hero-home.jpg',
+      media: '(min-width: 1201px)'
+    },
+    {
+      rel: 'preload',
+      as: 'image',
+      href: '/assets/images/hero-home-tablet.jpg',
+      media: '(min-width: 769px) and (max-width: 1200px)'
+    },
+    {
+      rel: 'preload',
+      as: 'image',
+      href: '/assets/images/hero-home-mobile.jpg',
+      media: '(max-width: 768px)'
+    },
+  
+    {
+      rel: 'preload',
+      as: 'image',
+      href: '/assets/images/hero-about.jpg',
+      media: '(min-width: 1201px)'
+    },
+    {
+      rel: 'preload',
+      as: 'image',
+      href: '/assets/images/hero-about-tablet.jpg',
+      media: '(min-width: 769px) and (max-width: 1200px)'
+    },
+    {
+      rel: 'preload',
+      as: 'image',
+      href: '/assets/images/hero-about-mobile.jpg',
+      media: '(max-width: 768px)'
+    }
+  ]
+})
+
+
 const nuxtApp = useNuxtApp();
 const scrollSmoother = nuxtApp.$scrollSmoother as ScrollSmoother | undefined;
 
@@ -266,7 +310,7 @@ onUnmounted(() => {
             <div class="footer__content-left">
               <p>
                 Сайт разработан командой:
-                <a href="mailto:michdev@example.com">MichDev</a>
+                <a href="mailto:michurinsk.dev@yandex.ru">MichDev</a>
               </p>
               <p>
                 Совместно с
