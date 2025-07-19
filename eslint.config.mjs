@@ -13,6 +13,5 @@ export default withNuxt({
       svg: "always",
       math: "always"
     }],
-    // Здесь можно добавить другие ваши кастомные правила ESLint
   }
 })
