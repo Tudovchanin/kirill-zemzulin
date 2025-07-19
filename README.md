@@ -1,75 +1,35 @@
-# Nuxt Minimal Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Портфолио с личным кабинетом для фотографа Кирилла Земзюлина
 
-## Setup
+## Технологии
 
-Make sure to install dependencies:
+- **Frontend:** Nuxt 3, GSAP  
+- **Backend / CMS:** Sanity (база данных и админ-панель)  
+- **Деплой:**  alwaysdata
 
-```bash
-# npm
-npm install
+## Сайт
 
-# pnpm
-pnpm install
+Сайт доступен на тестовом домене: [https://appweather.ru/](https://appweather.ru/)
 
-# yarn
-yarn install
+## Результаты Lighthouse (Perfect 100/100)
 
-# bun
-bun install
-```
+- ⚡ Performance: 95-100  
+- ♿ Accessibility: 100  
+- 🔧 Best Practices: 100  
+- 📱 SEO: 100
 
-## Development Server
+---
 
-Start the development server on `http://localhost:3000`:
+Этот проект демонстрирует современный подход к созданию портфолио с удобной админ-панелью на базе Sanity CMS и плавными анимациями с помощью GSAP в Nuxt 3.  
+Деплой выполнен с учётом оптимизации производительности и SEO.
 
-```bash
-# npm
-npm run dev
+---
 
-# pnpm
-pnpm dev
+## Тестирование
 
-# yarn
-yarn dev
+**Рекомендации:**
+- Используйте режим инкогнито (Ctrl+Shift+N)
+- Отключите браузерные расширения
 
-# bun
-bun run dev
-```
+*Некоторые расширения (блокировщики рекламы, VPN) могут влиять на работу сайта.*
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
