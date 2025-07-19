@@ -417,7 +417,7 @@ onBeforeUnmount(() => {
   93.75%  { background-position: -500px -500px; }
   95.83%  { background-position: -600px -500px; }
   97.92%  { background-position: -700px -500px; }
-  100%    { background-position:    0px    0px; } /* для плавного зацикливания */
+  100%    { background-position:    0px    0px; }
 }
 
 .pricing {
@@ -490,9 +490,7 @@ onBeforeUnmount(() => {
     background-position: 0 0;
     width: 100px;
     height: 100px;
-    // border: solid red;
     animation: fire 3s steps(1) infinite alternate;
-
   }
   }
 
