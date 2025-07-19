@@ -7,9 +7,10 @@
 - **Backend / CMS:** Sanity (база данных и админ-панель)  
 - **Деплой:**  alwaysdata
 
-## Сайт
+## Сайт  
 
-Сайт доступен на тестовом домене: [https://appweather.ru/](https://appweather.ru/)
+<https://kirillzemzyulin.ru>  
+
 
 ## Результаты Lighthouse (Perfect 100/100)
 
